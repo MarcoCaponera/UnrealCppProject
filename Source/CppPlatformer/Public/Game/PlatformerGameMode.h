@@ -9,7 +9,7 @@
 /**
  * 
  */
-UCLASS()
+UCLASS(Abstract)
 class CPPPLATFORMER_API APlatformerGameMode : public AGameModeBase
 {
 	GENERATED_BODY()

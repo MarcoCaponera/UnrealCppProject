@@ -15,6 +15,11 @@ void UPlayerMovementComponent::TickComponent(float DeltaTime, ELevelTick TickTyp
 	SafeMoveUpdatedComponent(Velocity * DeltaTime, FRotator::ZeroRotator, true, Hit);
 }
 
+void UPlayerMovementComponent::Move(FVector InputDirection)
+{
+	return;
+}
+
 void UPlayerMovementComponent::ApplyGravity()
 {
 	Velocity += Gravity;

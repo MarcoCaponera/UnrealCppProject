@@ -4,7 +4,10 @@
 #include "Player/PlayerPawn.h"
 #include "Player/PlayerMovementComponent.h"
 #include "Engine/SkeletalMesh.h"
+#include "Components/ArrowComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "EnhancedInputComponent.h"
+#include "EnhancedInputSubsystems.h"
 
 // Sets default values
 APlayerPawn::APlayerPawn()
@@ -14,6 +17,8 @@ APlayerPawn::APlayerPawn()
 
 	CapsuleComponent = CreateDefaultSubobject<UCapsuleComponent>(TEXT("PhysicsCoollider"));
 	SetRootComponent(CapsuleComponent);
+	ForwardArrow = CreateDefaultSubobject<UArrowComponent>(TEXT("ForwardArrow"));
+	ForwardArrow->SetupAttachment(CapsuleComponent);
 	MovementComponent = CreateDefaultSubobject<UPlayerMovementComponent>(TEXT("PlayerMovementComponent"));
 	SkeletalMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("PlayerSkeletalMesh"));
 	SkeletalMesh->SetupAttachment(CapsuleComponent);
@@ -22,7 +27,8 @@ APlayerPawn::APlayerPawn()
 	{
 		SkeletalMesh->SetSkeletalMesh(Mesh);
 	}
-	SkeletalMesh->SetRelativeRotation(FRotator(0, 90, 0));
+	SkeletalMesh->SetRelativeRotation(FRotator(0, -90, 0));
+	SkeletalMesh->SetRelativeLocation(FVector(0, 0, -CapsuleComponent->GetUnscaledCapsuleHalfHeight()));
 } 
 
 // Called when the game starts or when spawned
@@ -30,6 +36,13 @@ void APlayerPawn::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	if (APlayerController* PlayerController = Cast<APlayerController>(GetController()))
+	{
+		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
+		{
+			Subsystem->AddMappingContext(InputMapping.LoadSynchronous(), 0);
+		}
+	}
 }
 
 // Called every frame
@@ -44,5 +57,10 @@ void APlayerPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
+}
+
+void APlayerPawn::Move(FVector Input)
+{
+	MovementComponent->Move(Input);
 }
 

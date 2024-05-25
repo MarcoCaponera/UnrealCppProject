@@ -4,10 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
+#include "Player/PlayerInputActions.h"
+#include "InputMappingContext.h"
 #include "PlayerPawn.generated.h"
 
 UCLASS()
-class CPPPLATFORMER_API APlayerPawn : public APawn
+class CPPPLATFORMER_API APlayerPawn : public APawn, public IPlayerInputActions
 {
 	GENERATED_BODY()
 
@@ -29,6 +31,12 @@ protected:
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly)
 	class USkeletalMeshComponent* SkeletalMesh;
 
+	UPROPERTY(BlueprintReadWrite)
+	class UArrowComponent* ForwardArrow;
+
+	UPROPERTY(EditDefaultsOnly, Category="Input")
+	TSoftObjectPtr<UInputMappingContext> InputMapping;
+
 	const FString SkeletalMeshPath = "/Game/MyContent/Meshes/SKM_PlayerMesh.SKM_PlayerMesh";
 
 public:	
@@ -38,4 +46,5 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	virtual void Move(FVector InputDirection) override;
 };

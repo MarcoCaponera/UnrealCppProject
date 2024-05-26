@@ -2,6 +2,10 @@
 
 #include "Player/PlatformerPlayerController.h"
 #include "Player/PlayerInputActions.h"
+#include "InputAction.h"
+#include "InputMappingContext.h"
+#include "EnhancedInputComponent.h"
+#include "EnhancedInputSubsystems.h"
 
 void APlatformerPlayerController::OnPossess(APawn* InPawn)
 {
@@ -21,5 +25,30 @@ void APlatformerPlayerController::OnPossess(APawn* InPawn)
 
 void APlatformerPlayerController::SetupInputComponent()
 {
+	Super::SetupInputComponent();
+	if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(InputComponent))
+	{
+		if (MoveAction)
+		{
+			EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &APlatformerPlayerController::MoveCallback);
+		}
+	}
+
 	
+}
+
+void APlatformerPlayerController::BeginPlay()
+{
+	if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer()))
+	{
+		if (!MappingContext.IsNull())
+		{
+			Subsystem->AddMappingContext(MappingContext.LoadSynchronous(), 0);
+		}
+	}
+}
+
+void APlatformerPlayerController::MoveCallback(const FInputActionInstance& Value)
+{
+	PlayerInputActionsInstance->Move(Value);
 }

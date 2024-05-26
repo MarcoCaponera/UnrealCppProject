@@ -17,16 +17,23 @@ class CPPPLATFORMER_API UPlayerMovementComponent : public UMovementComponent
 public:
 	void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* TickFunction) override;
 
-	void Move(FVector InputDirection);
+	UFUNCTION()
+	void MoveX(float Value);
+
+	void MoveY(float Value);
 
 public:
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly)
 	bool bIsGravityAffected;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	bool bIsGrounded;
+	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly)
+	float WalkMovementSpeed;
+
 
 private:
 	void ApplyGravity();
+	void CheckGroundCollision();
 
 private:
 	const FVector Gravity = { 0, 0, -9.81f };

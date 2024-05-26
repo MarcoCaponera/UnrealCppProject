@@ -12,17 +12,27 @@ void UPlayerMovementComponent::TickComponent(float DeltaTime, ELevelTick TickTyp
 	}
 
 	FHitResult Hit;
-	SafeMoveUpdatedComponent(Velocity * DeltaTime, FRotator::ZeroRotator, true, Hit);
+	if (!SafeMoveUpdatedComponent(Velocity * DeltaTime, FRotator::ZeroRotator, true, Hit))
+	{
+		ResolvePenetration(GetPenetrationAdjustment(Hit), Hit, UpdatedComponent->GetComponentRotation());
+	}
+
 }
 
-void UPlayerMovementComponent::Move(FVector InputDirection)
+void UPlayerMovementComponent::MoveX(float Value)
 {
-	return;
+	FVector MoveDirection = UpdatedComponent->GetForwardVector() * Value * WalkMovementSpeed;
+	Velocity += MoveDirection;
 }
 
 void UPlayerMovementComponent::ApplyGravity()
 {
 	Velocity += Gravity;
+}
+
+void UPlayerMovementComponent::CheckGroundCollision()
+{
+	
 }
 
 

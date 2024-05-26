@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "UObject/Interface.h"
+#include "InputAction.h"
 #include "PlayerInputActions.generated.h"
 
 // This class does not need to be modified.
@@ -23,5 +24,5 @@ class CPPPLATFORMER_API IPlayerInputActions
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
 	UFUNCTION()
-	virtual void Move(FVector InputDirection);
+	virtual void Move(const FInputActionInstance& InputDirection);
 };

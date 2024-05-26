@@ -23,6 +23,9 @@ protected:
 
 protected:
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly)
+	class UCameraComponent* OrbitalCamera;
+
+	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly)
 	class UCapsuleComponent* CapsuleComponent;
 
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly)
@@ -34,8 +37,7 @@ protected:
 	UPROPERTY(BlueprintReadWrite)
 	class UArrowComponent* ForwardArrow;
 
-	UPROPERTY(EditDefaultsOnly, Category="Input")
-	TSoftObjectPtr<UInputMappingContext> InputMapping;
+
 
 	const FString SkeletalMeshPath = "/Game/MyContent/Meshes/SKM_PlayerMesh.SKM_PlayerMesh";
 
@@ -46,5 +48,5 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	virtual void Move(FVector InputDirection) override;
+	virtual void Move(const FInputActionInstance& Value) override;
 };

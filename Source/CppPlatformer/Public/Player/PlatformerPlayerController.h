@@ -19,8 +19,18 @@ protected:
 	UPROPERTY(BlueprintReadOnly)
 	TScriptInterface<IPlayerInputActions> PlayerInputActionsInstance;
 
+	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, Category = "Input")
+	TSoftObjectPtr<class UInputMappingContext> MappingContext;
+
+	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, Category = "Input|Actions")
+	class UInputAction* MoveAction;
+
 protected:
 	virtual void OnPossess(APawn* InPawn) override;
 
 	virtual void SetupInputComponent() override;
+
+	virtual void BeginPlay() override;
+
+	virtual void MoveCallback(const FInputActionInstance& Value);
 };

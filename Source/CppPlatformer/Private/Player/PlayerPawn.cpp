@@ -6,17 +6,19 @@
 #include "Engine/SkeletalMesh.h"
 #include "Components/ArrowComponent.h"
 #include "Components/CapsuleComponent.h"
-#include "EnhancedInputComponent.h"
-#include "EnhancedInputSubsystems.h"
+#include "Camera/CameraComponent.h"
 
 // Sets default values
 APlayerPawn::APlayerPawn()
 {
  	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+	
 
 	CapsuleComponent = CreateDefaultSubobject<UCapsuleComponent>(TEXT("PhysicsCoollider"));
 	SetRootComponent(CapsuleComponent);
+	OrbitalCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("OrbitalCamera"));
+	OrbitalCamera->SetupAttachment(CapsuleComponent);
 	ForwardArrow = CreateDefaultSubobject<UArrowComponent>(TEXT("ForwardArrow"));
 	ForwardArrow->SetupAttachment(CapsuleComponent);
 	MovementComponent = CreateDefaultSubobject<UPlayerMovementComponent>(TEXT("PlayerMovementComponent"));
@@ -35,21 +37,13 @@ APlayerPawn::APlayerPawn()
 void APlayerPawn::BeginPlay()
 {
 	Super::BeginPlay();
-	
-	if (APlayerController* PlayerController = Cast<APlayerController>(GetController()))
-	{
-		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
-		{
-			Subsystem->AddMappingContext(InputMapping.LoadSynchronous(), 0);
-		}
-	}
+
 }
 
 // Called every frame
 void APlayerPawn::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 
 // Called to bind functionality to input
@@ -59,8 +53,9 @@ void APlayerPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 
 }
 
-void APlayerPawn::Move(FVector Input)
+void APlayerPawn::Move(const FInputActionInstance& Input)
 {
-	MovementComponent->Move(Input);
+	FVector2D Value = Input.GetValue().Get<FVector2D>();
+	MovementComponent->MoveX(Value.X);
 }
 

@@ -13,7 +13,6 @@ APlayerPawn::APlayerPawn()
 {
  	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-	
 
 	CapsuleComponent = CreateDefaultSubobject<UCapsuleComponent>(TEXT("PhysicsCoollider"));
 	SetRootComponent(CapsuleComponent);
@@ -53,9 +52,22 @@ void APlayerPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 
 }
 
-void APlayerPawn::Move(const FInputActionInstance& Input)
+void APlayerPawn::MoveStart(const FInputActionInstance& Input)
 {
 	FVector2D Value = Input.GetValue().Get<FVector2D>();
-	MovementComponent->MoveX(Value.X);
+	if (Value != FVector2D::ZeroVector)
+	{
+		MovementComponent->Move(FVector(Value.X, Value.Y, 0));
+	}
+}
+
+void APlayerPawn::MoveEnd(const FInputActionInstance& Input)
+{
+	MovementComponent->MovementEndXY();
+}
+
+void APlayerPawn::Jump(const FInputActionInstance& Input)
+{
+	MovementComponent->Jump();
 }
 

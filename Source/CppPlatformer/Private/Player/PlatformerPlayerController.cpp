@@ -30,7 +30,13 @@ void APlatformerPlayerController::SetupInputComponent()
 	{
 		if (MoveAction)
 		{
-			EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &APlatformerPlayerController::MoveCallback);
+			EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &APlatformerPlayerController::MoveStartedCallback);
+			EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Completed, this, &APlatformerPlayerController::MoveEndedCallback);
+			
+		}
+		if (JumpAction)
+		{
+			EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Triggered, this, &APlatformerPlayerController::JumpCallback);
 		}
 	}
 
@@ -48,7 +54,17 @@ void APlatformerPlayerController::BeginPlay()
 	}
 }
 
-void APlatformerPlayerController::MoveCallback(const FInputActionInstance& Value)
+void APlatformerPlayerController::MoveStartedCallback(const FInputActionInstance& Value)
 {
-	PlayerInputActionsInstance->Move(Value);
+	PlayerInputActionsInstance->MoveStart(Value);
+}
+
+void APlatformerPlayerController::MoveEndedCallback(const FInputActionInstance& Value)
+{
+	PlayerInputActionsInstance->MoveEnd(Value);
+}
+
+void APlatformerPlayerController::JumpCallback(const FInputActionInstance& Value)
+{
+	PlayerInputActionsInstance->Jump(Value);
 }

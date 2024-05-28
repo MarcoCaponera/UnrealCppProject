@@ -17,24 +17,37 @@ class CPPPLATFORMER_API UPlayerMovementComponent : public UMovementComponent
 public:
 	void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* TickFunction) override;
 
-	UFUNCTION()
-	void MoveX(float Value);
+	UFUNCTION(BlueprintCallable)
+	void Move(FVector Direction);
 
-	void MoveY(float Value);
+	UFUNCTION(BlueprintCallable)
+	void Jump();
+
+	UFUNCTION(BlueprintCallable)
+	void MovementEndXY();
 
 public:
-	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly)
+	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, Category = "Physics")
 	bool bIsGravityAffected;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Physics")
 	bool bIsGrounded;
-	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly)
-	float WalkMovementSpeed;
+	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, Category = "Movement")
+	float MaxWalkMovementSpeed;
+	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, Category = "Movement")
+	float MaxAerialMovementSpeed;
+	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, Category = "Movement")
+	float Acceleration;
+	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, Category = "Movement")
+	float JumpForce;
 
 
 private:
 	void ApplyGravity();
-	void CheckGroundCollision();
+	void ApplyFriction();
 
 private:
 	const FVector Gravity = { 0, 0, -9.81f };
+	const float Friction = 0.1f;
+	bool bCanApplyFriction;
+	FVector LastMovementInput;
 };

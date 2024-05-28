@@ -6,7 +6,17 @@
 
 // Add default functionality here for any IPlayerInputActions functions that are not pure virtual.
 
-void IPlayerInputActions::Move(const FInputActionInstance& Input)
+void IPlayerInputActions::MoveStart(const FInputActionInstance& Input)
+{
+	return;
+}
+
+void IPlayerInputActions::MoveEnd(const FInputActionInstance& Input)
+{
+	return;
+}
+
+void IPlayerInputActions::Jump(const FInputActionInstance& Input)
 {
 	return;
 }

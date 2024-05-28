@@ -24,5 +24,11 @@ class CPPPLATFORMER_API IPlayerInputActions
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
 	UFUNCTION()
-	virtual void Move(const FInputActionInstance& InputDirection);
+	virtual void MoveStart(const FInputActionInstance& InputDirection);
+
+	UFUNCTION()
+	virtual void MoveEnd(const FInputActionInstance& InputDirection);
+
+	UFUNCTION()
+	virtual void Jump(const FInputActionInstance& Input);
 };

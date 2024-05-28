@@ -24,6 +24,9 @@ protected:
 
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, Category = "Input|Actions")
 	class UInputAction* MoveAction;
+	
+	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, Category = "Input|Actions")
+	class UInputAction* JumpAction;
 
 protected:
 	virtual void OnPossess(APawn* InPawn) override;
@@ -32,5 +35,9 @@ protected:
 
 	virtual void BeginPlay() override;
 
-	virtual void MoveCallback(const FInputActionInstance& Value);
+	virtual void MoveStartedCallback(const FInputActionInstance& Value);
+
+	virtual void MoveEndedCallback(const FInputActionInstance& Value);
+
+	virtual void JumpCallback(const FInputActionInstance& Value);
 };

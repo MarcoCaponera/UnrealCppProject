@@ -15,6 +15,7 @@ class CPPPLATFORMER_API UPlayerMovementComponent : public UMovementComponent
 	GENERATED_BODY()
 
 public:
+
 	void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* TickFunction) override;
 
 	UFUNCTION(BlueprintCallable)
@@ -39,15 +40,17 @@ public:
 	float Acceleration;
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, Category = "Movement")
 	float JumpForce;
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Movement")
+	float CurrentSpeed;
 
 
 private:
 	void ApplyGravity();
-	void ApplyFriction();
+	void GroundMove(FVector Direction);
+	void AerialMove(FVector Direction);
+	void ClampHorVelocity(float Max);
 
 private:
 	const FVector Gravity = { 0, 0, -9.81f };
-	const float Friction = 0.1f;
-	bool bCanApplyFriction;
 	FVector LastMovementInput;
 };

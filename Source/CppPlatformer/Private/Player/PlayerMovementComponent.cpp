@@ -5,18 +5,12 @@
 #include "Math/UnrealMathVectorCommon.h"
 #include "Kismet/KismetMathLibrary.h"
 
-
 void UPlayerMovementComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* TickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, TickFunction);
 	if (!bIsGrounded && bIsGravityAffected) 
 	{
 		ApplyGravity();
-	}
-	
-	if (bCanApplyFriction && bIsGrounded)
-	{
-		ApplyFriction();
 	}
 	
 
@@ -36,21 +30,33 @@ void UPlayerMovementComponent::TickComponent(float DeltaTime, ELevelTick TickTyp
 
 void UPlayerMovementComponent::MovementEndXY()
 {
-	bCanApplyFriction = true;
+	if (bIsGrounded)
+	{
+		Velocity.X = 0;
+		Velocity.Y = 0;
+		CurrentSpeed = 0;
+	}
 }
 
 void UPlayerMovementComponent::Move(FVector Direction)
 {
-	bCanApplyFriction = false;
-	Velocity += Direction * Acceleration;
+	if (bIsGrounded)
+	{
+		GroundMove(Direction);
+	}
+	else
+	{
+		AerialMove(Direction);
+	}
 	UpdatedComponent->SetWorldRotation(Direction.ToOrientationQuat());
+	LastMovementInput = Direction;
 }
 
 void UPlayerMovementComponent::Jump()
 {
 	if (bIsGrounded)
 	{
-		Velocity = FVector(Velocity.X, Velocity.Y, JumpForce);
+		Velocity.Z = JumpForce;
 		bIsGrounded = false;
 	}
 }
@@ -61,14 +67,34 @@ void UPlayerMovementComponent::ApplyGravity()
 	Velocity += Gravity;
 }
 
-void UPlayerMovementComponent::ApplyFriction()
+
+void UPlayerMovementComponent::GroundMove(FVector Direction)
 {
-	FVector2D Result = FMath::Lerp(FVector2D(Velocity.X, Velocity.Y), FVector2D::ZeroVector, Friction);
-	Velocity = FVector(Result.X, Result.Y, Velocity.Z);
-	if (Result.Length() <= 1.f)
+	FVector2D VelocityXY = FVector2D(Velocity.X, Velocity.Y);
+	if (LastMovementInput != Direction)
 	{
-		Velocity.X = 0;
-		Velocity.Y = 0;
+		Velocity = Direction * CurrentSpeed;
+		VelocityXY = FVector2D(Velocity.X, Velocity.Y);
+	}
+	Velocity += Direction * Acceleration;
+	CurrentSpeed += Acceleration;
+	ClampHorVelocity(MaxWalkMovementSpeed);
+}
+
+void UPlayerMovementComponent::AerialMove(FVector Direction)
+{
+	Velocity += Direction * Acceleration;
+}
+
+void UPlayerMovementComponent::ClampHorVelocity(float Max)
+{
+	FVector2D VelocityXY = FVector2D(Velocity.X, Velocity.Y);
+	if (VelocityXY.SquaredLength() >= Max * Max)
+	{
+		VelocityXY.Normalize();
+		VelocityXY = VelocityXY * Max;
+		Velocity = FVector(VelocityXY.X, VelocityXY.Y, Velocity.Z);
+		CurrentSpeed = Max;
 	}
 }
 

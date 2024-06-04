@@ -41,7 +41,7 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, Category = "Movement")
 	float JumpForce;
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Movement")
-	float CurrentSpeed;
+	float CurrentHorSpeed;
 
 
 private:
@@ -49,8 +49,10 @@ private:
 	void GroundMove(FVector Direction);
 	void AerialMove(FVector Direction);
 	void ClampHorVelocity(float Max);
+	bool GetGroundNormal(FVector& Normal);
 
 private:
 	const FVector Gravity = { 0, 0, -9.81f };
 	FVector LastMovementInput;
+	bool IsMoving;
 };

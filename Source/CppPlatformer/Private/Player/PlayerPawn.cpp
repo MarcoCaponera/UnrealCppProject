@@ -6,6 +6,7 @@
 #include "Engine/SkeletalMesh.h"
 #include "Components/ArrowComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "PhysicalMaterials/PhysicalMaterial.h"
 #include "Camera/CameraComponent.h"
 
 // Sets default values
@@ -15,6 +16,7 @@ APlayerPawn::APlayerPawn()
 	PrimaryActorTick.bCanEverTick = true;
 
 	CapsuleComponent = CreateDefaultSubobject<UCapsuleComponent>(TEXT("PhysicsCoollider"));
+	CapsuleComponent->SetCollisionProfileName(TEXT("Player"), true);
 	SetRootComponent(CapsuleComponent);
 	OrbitalCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("OrbitalCamera"));
 	OrbitalCamera->SetupAttachment(CapsuleComponent);

@@ -4,6 +4,8 @@
 #include "Player/PlayerMovementComponent.h"
 #include "Math/UnrealMathVectorCommon.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "DrawDebugHelpers.h"
+
 
 void UPlayerMovementComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* TickFunction)
 {
@@ -23,6 +25,11 @@ void UPlayerMovementComponent::TickComponent(float DeltaTime, ELevelTick TickTyp
 		{
 			bIsGrounded = true;
 			Velocity.Z = 0;
+			if (!IsMoving)
+			{
+				Velocity.X = 0;
+				Velocity.Y = 0;
+			}
 		}
 	}
 
@@ -30,16 +37,18 @@ void UPlayerMovementComponent::TickComponent(float DeltaTime, ELevelTick TickTyp
 
 void UPlayerMovementComponent::MovementEndXY()
 {
+	IsMoving = false;
 	if (bIsGrounded)
 	{
 		Velocity.X = 0;
 		Velocity.Y = 0;
-		CurrentSpeed = 0;
+		CurrentHorSpeed = 0;
 	}
 }
 
 void UPlayerMovementComponent::Move(FVector Direction)
 {
+	IsMoving = true;
 	if (bIsGrounded)
 	{
 		GroundMove(Direction);
@@ -70,20 +79,29 @@ void UPlayerMovementComponent::ApplyGravity()
 
 void UPlayerMovementComponent::GroundMove(FVector Direction)
 {
-	FVector2D VelocityXY = FVector2D(Velocity.X, Velocity.Y);
+	FVector Normal; 
+	GetGroundNormal(Normal);
+	FVector ForwardToUse = -FVector::CrossProduct(Normal, UpdatedComponent->GetRightVector());
+	DrawDebugLine(GetWorld(), UpdatedComponent->GetComponentLocation(), UpdatedComponent->GetComponentLocation() + ForwardToUse * 100.f, FColor::Blue, false, -1.f, 0, 5.f);
+	FVector RightToUse = FVector::CrossProduct(Normal, UpdatedComponent->GetForwardVector());
+	DrawDebugLine(GetWorld(), UpdatedComponent->GetComponentLocation(), UpdatedComponent->GetComponentLocation() + RightToUse * 100.f, FColor::Purple, false, -1.f, 0, 5.f);
+	FVector VelocityDirection = ForwardToUse * Direction.X + RightToUse * Direction.Y;
+	DrawDebugLine(GetWorld(), UpdatedComponent->GetComponentLocation(), UpdatedComponent->GetComponentLocation() + VelocityDirection * 100.f, FColor::Green, false, -1.f, 0, 5.f);
+	VelocityDirection.Normalize();
 	if (LastMovementInput != Direction)
 	{
-		Velocity = Direction * CurrentSpeed;
-		VelocityXY = FVector2D(Velocity.X, Velocity.Y);
+		Velocity = VelocityDirection * CurrentHorSpeed;
 	}
-	Velocity += Direction * Acceleration;
-	CurrentSpeed += Acceleration;
+	Velocity += VelocityDirection * Acceleration;
+	CurrentHorSpeed += Acceleration;
 	ClampHorVelocity(MaxWalkMovementSpeed);
 }
 
 void UPlayerMovementComponent::AerialMove(FVector Direction)
 {
 	Velocity += Direction * Acceleration;
+	CurrentHorSpeed += Acceleration;
+	ClampHorVelocity(MaxAerialMovementSpeed);
 }
 
 void UPlayerMovementComponent::ClampHorVelocity(float Max)
@@ -94,8 +112,25 @@ void UPlayerMovementComponent::ClampHorVelocity(float Max)
 		VelocityXY.Normalize();
 		VelocityXY = VelocityXY * Max;
 		Velocity = FVector(VelocityXY.X, VelocityXY.Y, Velocity.Z);
-		CurrentSpeed = Max;
+		CurrentHorSpeed = Max;
 	}
+}
+
+bool UPlayerMovementComponent::GetGroundNormal(FVector& Normal)
+{
+	FHitResult Hit;
+	FVector Start = UpdatedComponent->GetComponentLocation();
+	FVector End = Start - FVector::UpVector * 100;
+	End = End + LastMovementInput * 50;
+	DrawDebugLine(GetWorld(), Start, End, FColor::Black, false, -1.f, 0, 5.f);
+	if (GetWorld()->LineTraceSingleByChannel(Hit, Start, End, ECollisionChannel::ECC_GameTraceChannel2))
+	{
+		bIsGrounded = true;
+		Normal = Hit.Normal;
+		return true;
+	}
+	bIsGrounded = false;
+	return false;
 }
 
 

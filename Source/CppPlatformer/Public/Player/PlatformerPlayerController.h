@@ -28,6 +28,9 @@ protected:
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, Category = "Input|Actions")
 	class UInputAction* JumpAction;
 
+	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, Category = "Input|Actions")
+	class UInputAction* LookAction;
+
 protected:
 	virtual void OnPossess(APawn* InPawn) override;
 
@@ -40,4 +43,6 @@ protected:
 	virtual void MoveEndedCallback(const FInputActionInstance& Value);
 
 	virtual void JumpCallback(const FInputActionInstance& Value);
+
+	virtual void LookCallback(const FInputActionInstance& Value);
 };

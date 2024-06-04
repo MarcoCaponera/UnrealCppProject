@@ -22,8 +22,12 @@ protected:
 	virtual void BeginPlay() override;
 
 protected:
+
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly)
-	class UCameraComponent* OrbitalCamera;
+	class USpringArmComponent* SpringArmComp;
+
+	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly)
+	class UOrbitalCamera* OrbitalCamera;
 
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly)
 	class UCapsuleComponent* CapsuleComponent;
@@ -53,4 +57,6 @@ public:
 	virtual void MoveEnd(const FInputActionInstance& Value) override;
 
 	virtual void Jump(const FInputActionInstance& Input) override;
+
+	virtual void Look(const FInputActionInstance& Input) override;
 };

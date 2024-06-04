@@ -38,6 +38,10 @@ void APlatformerPlayerController::SetupInputComponent()
 		{
 			EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Triggered, this, &APlatformerPlayerController::JumpCallback);
 		}
+		if (LookAction)
+		{
+			EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &APlatformerPlayerController::LookCallback);
+		}
 	}
 
 	
@@ -67,4 +71,9 @@ void APlatformerPlayerController::MoveEndedCallback(const FInputActionInstance& 
 void APlatformerPlayerController::JumpCallback(const FInputActionInstance& Value)
 {
 	PlayerInputActionsInstance->Jump(Value);
+}
+
+void APlatformerPlayerController::LookCallback(const FInputActionInstance& Value)
+{
+	PlayerInputActionsInstance->Look(Value);
 }

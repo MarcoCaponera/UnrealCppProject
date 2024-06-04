@@ -7,6 +7,8 @@
 #include "Components/ArrowComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "PhysicalMaterials/PhysicalMaterial.h"
+#include "Player/OrbitalCamera.h"
+#include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
 
 // Sets default values
@@ -18,8 +20,11 @@ APlayerPawn::APlayerPawn()
 	CapsuleComponent = CreateDefaultSubobject<UCapsuleComponent>(TEXT("PhysicsCoollider"));
 	CapsuleComponent->SetCollisionProfileName(TEXT("Player"), true);
 	SetRootComponent(CapsuleComponent);
-	OrbitalCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("OrbitalCamera"));
-	OrbitalCamera->SetupAttachment(CapsuleComponent);
+	SpringArmComp = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
+	SpringArmComp->SetupAttachment(CapsuleComponent);
+	OrbitalCamera = CreateDefaultSubobject<UOrbitalCamera>(TEXT("OrbitalCamera"));
+	OrbitalCamera->AttachToComponent(SpringArmComp, FAttachmentTransformRules::KeepRelativeTransform);
+	SpringArmComp->TargetArmLength = 300.f;
 	ForwardArrow = CreateDefaultSubobject<UArrowComponent>(TEXT("ForwardArrow"));
 	ForwardArrow->SetupAttachment(CapsuleComponent);
 	MovementComponent = CreateDefaultSubobject<UPlayerMovementComponent>(TEXT("PlayerMovementComponent"));
@@ -71,5 +76,15 @@ void APlayerPawn::MoveEnd(const FInputActionInstance& Input)
 void APlayerPawn::Jump(const FInputActionInstance& Input)
 {
 	MovementComponent->Jump();
+}
+
+void APlayerPawn::Look(const FInputActionInstance& Input)
+{
+	FVector2D Value = Input.GetValue().Get<FVector2D>();
+	float X = Value.X;
+	if (Value != FVector2D::ZeroVector)
+	{
+		OrbitalCamera->Rotate(Value);
+	}
 }
 

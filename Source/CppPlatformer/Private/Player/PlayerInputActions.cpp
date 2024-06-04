@@ -20,3 +20,8 @@ void IPlayerInputActions::Jump(const FInputActionInstance& Input)
 {
 	return;
 }
+
+void IPlayerInputActions::Look(const FInputActionInstance& InputDirection)
+{
+	return;
+}

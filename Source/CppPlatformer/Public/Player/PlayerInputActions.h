@@ -31,4 +31,7 @@ public:
 
 	UFUNCTION()
 	virtual void Jump(const FInputActionInstance& Input);
+
+	UFUNCTION()
+	virtual void Look(const FInputActionInstance& InputDirection);
 };

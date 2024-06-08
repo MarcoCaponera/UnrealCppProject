@@ -20,11 +20,8 @@ APlayerPawn::APlayerPawn()
 	CapsuleComponent = CreateDefaultSubobject<UCapsuleComponent>(TEXT("PhysicsCoollider"));
 	CapsuleComponent->SetCollisionProfileName(TEXT("Player"), true);
 	SetRootComponent(CapsuleComponent);
-	SpringArmComp = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
-	SpringArmComp->SetupAttachment(CapsuleComponent);
 	OrbitalCamera = CreateDefaultSubobject<UOrbitalCamera>(TEXT("OrbitalCamera"));
-	OrbitalCamera->AttachToComponent(SpringArmComp, FAttachmentTransformRules::KeepRelativeTransform);
-	SpringArmComp->TargetArmLength = 300.f;
+	OrbitalCamera->SetupAttachment(CapsuleComponent);
 	ForwardArrow = CreateDefaultSubobject<UArrowComponent>(TEXT("ForwardArrow"));
 	ForwardArrow->SetupAttachment(CapsuleComponent);
 	MovementComponent = CreateDefaultSubobject<UPlayerMovementComponent>(TEXT("PlayerMovementComponent"));
@@ -56,7 +53,11 @@ void APlayerPawn::Tick(float DeltaTime)
 void APlayerPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
+}
 
+UOrbitalCamera* APlayerPawn::GetCamera()
+{
+	return OrbitalCamera;
 }
 
 void APlayerPawn::MoveStart(const FInputActionInstance& Input)

@@ -7,7 +7,10 @@
 
 UOrbitalCamera::UOrbitalCamera()
 {
-    CameraDist = Cast<USpringArmComponent>(GetAttachParent())->TargetArmLength;
+    if (GetOwner())
+    {
+        CameraTransform = GetComponentTransform();
+    }
 }
 
 void UOrbitalCamera::Rotate(FVector2D Value)
@@ -21,9 +24,11 @@ void UOrbitalCamera::Rotate(FVector2D Value)
     FVector FromToVector = NewLocationXY - FromToVector;
     FromToVector.Normalize();
 
-    SetRelativeLocation(FromToVector * CameraDist);
+    //SetRelativeLocation(FromToVector * CameraDist);
 
-    SetWorldRotation(LookAt(SelfLocation, PlayerLocation));
+    //SetWorldRotation(LookAt(SelfLocation, PlayerLocation));
+
+    SetWorldLocation(CameraTransform.GetLocation() + GetOwner()->GetActorLocation());
 }
 
 FQuat UOrbitalCamera::LookAt(FVector SourcePoint, FVector DestPoint)

@@ -18,6 +18,8 @@ public:
 
 	void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* TickFunction) override;
 
+	UPlayerMovementComponent();
+
 	UFUNCTION(BlueprintCallable)
 	void Move(FVector Direction);
 
@@ -42,17 +44,27 @@ public:
 	float JumpForce;
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Movement")
 	float CurrentHorSpeed;
+	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, Category = "Rotation")
+	float RotationSpeed;
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Rotation")
+	FRotator TargetRotation;
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Rotation")
+	FRotator CurrentRotation;
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "PlayerInterface")
+	TScriptInterface<class IPlayerReferenceGetter> PlayerGetterReference;
 
-
-private:
+protected:
 	void ApplyGravity();
-	void GroundMove(FVector Direction);
+	void GroundMove(FVector Direction, bool bDirectionChange);
 	void AerialMove(FVector Direction);
 	void ClampHorVelocity(float Max);
 	bool GetGroundNormal(FVector& Normal);
+	bool DetectGround(FHitResult& Hit);
+	void SmoothRotation();
 
 private:
 	const FVector Gravity = { 0, 0, -9.81f };
 	FVector LastMovementInput;
 	bool IsMoving;
+	bool SmoothRotationFlag;
 };

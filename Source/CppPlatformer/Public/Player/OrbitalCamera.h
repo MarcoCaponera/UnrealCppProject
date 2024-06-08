@@ -29,4 +29,5 @@ public:
 
 protected:
 	float CameraDist;
+	FTransform CameraTransform;
 };

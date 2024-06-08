@@ -6,10 +6,11 @@
 #include "GameFramework/Pawn.h"
 #include "Player/PlayerInputActions.h"
 #include "InputMappingContext.h"
+#include "Player/PlayerReferenceGetter.h"
 #include "PlayerPawn.generated.h"
 
 UCLASS()
-class CPPPLATFORMER_API APlayerPawn : public APawn, public IPlayerInputActions
+class CPPPLATFORMER_API APlayerPawn : public APawn, public IPlayerInputActions, public IPlayerReferenceGetter
 {
 	GENERATED_BODY()
 
@@ -22,9 +23,6 @@ protected:
 	virtual void BeginPlay() override;
 
 protected:
-
-	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly)
-	class USpringArmComponent* SpringArmComp;
 
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly)
 	class UOrbitalCamera* OrbitalCamera;
@@ -51,6 +49,8 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	virtual UOrbitalCamera* GetCamera();
 
 	virtual void MoveStart(const FInputActionInstance& Value) override;
 

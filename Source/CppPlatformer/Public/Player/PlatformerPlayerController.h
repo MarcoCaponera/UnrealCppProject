@@ -31,6 +31,8 @@ protected:
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, Category = "Input|Actions")
 	class UInputAction* LookAction;
 
+
+
 protected:
 	virtual void OnPossess(APawn* InPawn) override;
 

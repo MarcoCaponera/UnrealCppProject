@@ -4,7 +4,11 @@
 #include "Player/PlayerMovementComponent.h"
 #include "Math/UnrealMathVectorCommon.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Player/PlayerReferenceGetter.h"
+#include "Player/PlayerPawn.h"
+#include "Player/OrbitalCamera.h"
 #include "DrawDebugHelpers.h"
+
 
 
 void UPlayerMovementComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* TickFunction)
@@ -17,22 +21,36 @@ void UPlayerMovementComponent::TickComponent(float DeltaTime, ELevelTick TickTyp
 	
 
 	FHitResult Hit;
-	if (!SafeMoveUpdatedComponent(Velocity * DeltaTime, FRotator::ZeroRotator, true, Hit))
+	if (!SafeMoveUpdatedComponent(Velocity * DeltaTime, CurrentRotation, true, Hit))
 	{
 		ResolvePenetration(GetPenetrationAdjustment(Hit), Hit, UpdatedComponent->GetComponentRotation());
-		float HitZ = Hit.ImpactNormal.Z;
-		if (HitZ > 0.0f)
-		{
-			bIsGrounded = true;
-			Velocity.Z = 0;
-			if (!IsMoving)
-			{
-				Velocity.X = 0;
-				Velocity.Y = 0;
-			}
-		}
 	}
 
+	//I prefer to detect ground collision with a line trace rather than with collision directly, gives me more control 
+	if (DetectGround(Hit))
+	{
+		Velocity.Z = 0;
+		if (!IsMoving)
+		{
+			Velocity.X = 0;
+			Velocity.Y = 0;
+		}
+	}
+	SmoothRotation();
+}
+
+UPlayerMovementComponent::UPlayerMovementComponent()
+{
+	if (GetOwner())
+	{
+		IPlayerReferenceGetter* PlayerReference = Cast<IPlayerReferenceGetter>(GetOwner());
+		if (PlayerReference)
+		{
+			PlayerGetterReference.SetInterface(PlayerReference);
+			PlayerGetterReference.SetObject(GetOwner());
+		}
+	}
+	
 }
 
 void UPlayerMovementComponent::MovementEndXY()
@@ -49,16 +67,21 @@ void UPlayerMovementComponent::MovementEndXY()
 void UPlayerMovementComponent::Move(FVector Direction)
 {
 	IsMoving = true;
+	bool bDirectionChange = LastMovementInput != Direction;
 	if (bIsGrounded)
 	{
-		GroundMove(Direction);
+		GroundMove(Direction, bDirectionChange);
 	}
 	else
 	{
 		AerialMove(Direction);
 	}
-	UpdatedComponent->SetWorldRotation(Direction.ToOrientationQuat());
+	if (bDirectionChange)
+	{
+		SmoothRotationFlag = true;
+	}
 	LastMovementInput = Direction;
+	TargetRotation = LastMovementInput.Rotation();
 }
 
 void UPlayerMovementComponent::Jump()
@@ -77,23 +100,24 @@ void UPlayerMovementComponent::ApplyGravity()
 }
 
 
-void UPlayerMovementComponent::GroundMove(FVector Direction)
+void UPlayerMovementComponent::GroundMove(FVector Direction, bool bDirectionChange)
 {
 	FVector Normal; 
 	GetGroundNormal(Normal);
-	FVector ForwardToUse = -FVector::CrossProduct(Normal, UpdatedComponent->GetRightVector());
-	DrawDebugLine(GetWorld(), UpdatedComponent->GetComponentLocation(), UpdatedComponent->GetComponentLocation() + ForwardToUse * 100.f, FColor::Blue, false, -1.f, 0, 5.f);
-	FVector RightToUse = FVector::CrossProduct(Normal, UpdatedComponent->GetForwardVector());
-	DrawDebugLine(GetWorld(), UpdatedComponent->GetComponentLocation(), UpdatedComponent->GetComponentLocation() + RightToUse * 100.f, FColor::Purple, false, -1.f, 0, 5.f);
+	UOrbitalCamera* Camera = PlayerGetterReference->GetCamera();
+	FVector ForwardToUse = -FVector::CrossProduct(Normal, Camera->GetRightVector());
+	DrawDebugLine(GetWorld(), GetOwner()->GetActorLocation(), GetOwner()->GetActorLocation() + ForwardToUse * 100.f, FColor::Blue, false, -1.f, 0, 5.f);
+	FVector RightToUse = FVector::CrossProduct(Normal, PlayerGetterReference->GetCamera()->GetForwardVector());
+	DrawDebugLine(GetWorld(), GetOwner()->GetActorLocation(), GetOwner()->GetActorLocation() + RightToUse * 100.f, FColor::Purple, false, -1.f, 0, 5.f);
 	FVector VelocityDirection = ForwardToUse * Direction.X + RightToUse * Direction.Y;
-	DrawDebugLine(GetWorld(), UpdatedComponent->GetComponentLocation(), UpdatedComponent->GetComponentLocation() + VelocityDirection * 100.f, FColor::Green, false, -1.f, 0, 5.f);
+	DrawDebugLine(GetWorld(), GetOwner()->GetActorLocation(), GetOwner()->GetActorLocation() + VelocityDirection * 100.f, FColor::Green, false, -1.f, 0, 5.f);
 	VelocityDirection.Normalize();
 	if (LastMovementInput != Direction)
 	{
 		Velocity = VelocityDirection * CurrentHorSpeed;
 	}
-	Velocity += VelocityDirection * Acceleration;
 	CurrentHorSpeed += Acceleration;
+	Velocity = VelocityDirection * CurrentHorSpeed;
 	ClampHorVelocity(MaxWalkMovementSpeed);
 }
 
@@ -119,19 +143,46 @@ void UPlayerMovementComponent::ClampHorVelocity(float Max)
 bool UPlayerMovementComponent::GetGroundNormal(FVector& Normal)
 {
 	FHitResult Hit;
+	if (DetectGround(Hit)) 
+	{
+		Normal = Hit.Normal;
+		return true;
+	}
+	return false;
+}
+
+bool UPlayerMovementComponent::DetectGround(FHitResult& Hit)
+{
 	FVector Start = UpdatedComponent->GetComponentLocation();
-	FVector End = Start - FVector::UpVector * 100;
-	End = End + LastMovementInput * 50;
+	FVector End = Start - FVector::UpVector * 110;
 	DrawDebugLine(GetWorld(), Start, End, FColor::Black, false, -1.f, 0, 5.f);
 	if (GetWorld()->LineTraceSingleByChannel(Hit, Start, End, ECollisionChannel::ECC_GameTraceChannel2))
 	{
 		bIsGrounded = true;
-		Normal = Hit.Normal;
-		return true;
 	}
-	bIsGrounded = false;
-	return false;
+	else 
+	{
+		bIsGrounded = false;
+	}
+	return bIsGrounded;
+
 }
+
+void UPlayerMovementComponent::SmoothRotation()
+{
+	if (SmoothRotationFlag)
+	{
+		if (FMath::Acos(FVector::DotProduct(GetOwner()->GetActorForwardVector(), TargetRotation.Vector())) >= 0.1f)
+		{
+			CurrentRotation = UKismetMathLibrary::RLerp(CurrentRotation, TargetRotation, GetWorld()->GetDeltaSeconds() * RotationSpeed, true);
+		}
+		else 
+		{
+			SmoothRotationFlag = false;
+		}
+	}
+}
+
 
 
 

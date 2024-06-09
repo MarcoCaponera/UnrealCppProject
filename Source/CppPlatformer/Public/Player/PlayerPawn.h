@@ -25,6 +25,9 @@ protected:
 protected:
 
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly)
+	class USpringArmComponent* SpringArm;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	class UOrbitalCamera* OrbitalCamera;
 
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly)
@@ -50,7 +53,9 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	virtual UOrbitalCamera* GetCamera();
+	virtual UOrbitalCamera* GetCamera() override;
+
+	virtual USpringArmComponent* GetSpringArm() override;
 
 	virtual void MoveStart(const FInputActionInstance& Value) override;
 

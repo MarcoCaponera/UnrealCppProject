@@ -24,4 +24,7 @@ class CPPPLATFORMER_API IPlayerReferenceGetter
 public:
 	UFUNCTION()
 	virtual class UOrbitalCamera* GetCamera();
+
+	UFUNCTION()
+	virtual class USpringArmComponent* GetSpringArm();
 };

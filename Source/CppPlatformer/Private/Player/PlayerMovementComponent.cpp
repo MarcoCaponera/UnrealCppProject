@@ -105,6 +105,7 @@ void UPlayerMovementComponent::GroundMove(FVector Direction, bool bDirectionChan
 	FVector Normal; 
 	GetGroundNormal(Normal);
 	UOrbitalCamera* Camera = PlayerGetterReference->GetCamera();
+	UE_LOG(LogTemp, Warning, TEXT("CameraRight X:%f, Y:%f, Z:%f"), Camera->GetRightVector().X, Camera->GetRightVector().Y, Camera->GetRightVector().Z)
 	FVector ForwardToUse = -FVector::CrossProduct(Normal, Camera->GetRightVector());
 	DrawDebugLine(GetWorld(), GetOwner()->GetActorLocation(), GetOwner()->GetActorLocation() + ForwardToUse * 100.f, FColor::Blue, false, -1.f, 0, 5.f);
 	FVector RightToUse = FVector::CrossProduct(Normal, PlayerGetterReference->GetCamera()->GetForwardVector());

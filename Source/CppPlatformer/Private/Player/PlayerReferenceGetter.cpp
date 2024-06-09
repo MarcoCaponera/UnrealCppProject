@@ -9,3 +9,8 @@ UOrbitalCamera* IPlayerReferenceGetter::GetCamera()
 {
 	return nullptr;
 }
+
+USpringArmComponent* IPlayerReferenceGetter::GetSpringArm()
+{
+	return nullptr;
+}

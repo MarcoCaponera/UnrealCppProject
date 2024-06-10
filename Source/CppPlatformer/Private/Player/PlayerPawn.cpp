@@ -57,12 +57,19 @@ void APlayerPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 }
 
-UOrbitalCamera* APlayerPawn::GetCamera()
+FVector APlayerPawn::GetCameraRight() const
 {
-	return OrbitalCamera;
+	return OrbitalCamera->GetWorldRight();
 }
 
-USpringArmComponent* APlayerPawn::GetSpringArm()
+FVector APlayerPawn::GetCameraForward() const
+{
+	FVector V = OrbitalCamera->GetWorldForward();
+	//UE_LOG(LogTemp, Warning, TEXT("PLAYER - X: %f, Y: %f, Z: %f"), V.X, V.Y, V.Z);
+	return V;
+}
+
+USpringArmComponent* APlayerPawn::GetSpringArm() const
 {
 	return SpringArm;
 }

@@ -6,7 +6,8 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "Player/PlayerReferenceGetter.h"
 #include "Player/PlayerPawn.h"
-#include "Player/OrbitalCamera.h"
+#include "Camera/CameraComponent.h"
+#include "GameFramework/SpringArmComponent.h"
 #include "DrawDebugHelpers.h"
 
 
@@ -104,11 +105,12 @@ void UPlayerMovementComponent::GroundMove(FVector Direction, bool bDirectionChan
 {
 	FVector Normal; 
 	GetGroundNormal(Normal);
-	UOrbitalCamera* Camera = PlayerGetterReference->GetCamera();
-	UE_LOG(LogTemp, Warning, TEXT("CameraRight X:%f, Y:%f, Z:%f"), Camera->GetRightVector().X, Camera->GetRightVector().Y, Camera->GetRightVector().Z)
-	FVector ForwardToUse = -FVector::CrossProduct(Normal, Camera->GetRightVector());
+	FVector CameraForward = PlayerGetterReference->GetCameraForward();
+	FVector CameraRight = PlayerGetterReference->GetCameraRight();
+	//UE_LOG(LogTemp, Warning, TEXT("MOVEMENT COMPONENT - X: %f, Y: %f, Z: %f"), CameraForward.X, CameraForward.Y, CameraForward.Z);
+	FVector ForwardToUse = -FVector::CrossProduct(Normal, CameraRight);
 	DrawDebugLine(GetWorld(), GetOwner()->GetActorLocation(), GetOwner()->GetActorLocation() + ForwardToUse * 100.f, FColor::Blue, false, -1.f, 0, 5.f);
-	FVector RightToUse = FVector::CrossProduct(Normal, PlayerGetterReference->GetCamera()->GetForwardVector());
+	FVector RightToUse = FVector::CrossProduct(Normal, CameraForward);
 	DrawDebugLine(GetWorld(), GetOwner()->GetActorLocation(), GetOwner()->GetActorLocation() + RightToUse * 100.f, FColor::Purple, false, -1.f, 0, 5.f);
 	FVector VelocityDirection = ForwardToUse * Direction.X + RightToUse * Direction.Y;
 	DrawDebugLine(GetWorld(), GetOwner()->GetActorLocation(), GetOwner()->GetActorLocation() + VelocityDirection * 100.f, FColor::Green, false, -1.f, 0, 5.f);

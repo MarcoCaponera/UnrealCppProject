@@ -5,12 +5,18 @@
 
 // Add default functionality here for any IPlayerReferenceGetter functions that are not pure virtual.
 
-UOrbitalCamera* IPlayerReferenceGetter::GetCamera()
+FVector IPlayerReferenceGetter::GetCameraRight() const
 {
-	return nullptr;
+	return FVector::ZeroVector;
 }
 
-USpringArmComponent* IPlayerReferenceGetter::GetSpringArm()
+FVector IPlayerReferenceGetter::GetCameraForward() const
+{
+	return FVector::ZeroVector;
+}
+
+
+USpringArmComponent* IPlayerReferenceGetter::GetSpringArm() const
 {
 	return nullptr;
 }

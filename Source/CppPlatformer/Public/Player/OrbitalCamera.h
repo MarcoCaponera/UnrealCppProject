@@ -36,9 +36,16 @@ public:
 	bool BlockPitch;
 
 
+
 public:
 	UOrbitalCamera();
 
 	UFUNCTION(BlueprintCallable)
 	void Rotate(FVector2D Value);
+
+	UFUNCTION(BlueprintCallable)
+	FVector GetWorldRight() const;
+
+	UFUNCTION(BlueprintCallable)
+	FVector GetWorldForward() const;
 };

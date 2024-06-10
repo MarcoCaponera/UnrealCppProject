@@ -21,15 +21,9 @@ UOrbitalCamera::UOrbitalCamera()
 
 void UOrbitalCamera::Rotate(FVector2D Value)
 {
-    if (LastPitchInputDirection * Value.Y < 0) 
-    {
-        UE_LOG(LogTemp, Warning, TEXT("Letsgoo"));
-    }
-
-    if (LastPitchInputDirection * Value.Y < 0 && BlockPitch == true)
+    if (FMath::Sign(LastPitchInputDirection) != FMath::Sign(Value.Y) && BlockPitch == true)
     {
         BlockPitch = false;
-        UE_LOG(LogTemp, Warning, TEXT("Pitch Unlocked by Check"));
     }
     LastPitchInputDirection = Value.Y;
 
@@ -47,17 +41,30 @@ void UOrbitalCamera::Rotate(FVector2D Value)
     {
         SpringArm->SetRelativeRotation(FRotator(MaxPitch, SpringArm->GetRelativeRotation().Yaw, SpringArm->GetRelativeRotation().Roll));
         BlockPitch = true;
-        UE_LOG(LogTemp, Warning, TEXT("Pitch Blocked by MaxPitch"));
         return;
     }
     else if (CurrentPitch < MinPitch) 
     {
         SpringArm->SetRelativeRotation(FRotator(MinPitch, SpringArm->GetRelativeRotation().Yaw, SpringArm->GetRelativeRotation().Roll));
         BlockPitch = true;
-        UE_LOG(LogTemp, Warning, TEXT("Pitch Blocked by MinPitch"));
         return;
     }
 
     SpringArm->AddRelativeRotation(Diff);
+
+    UE_LOG(LogTemp, Warning, TEXT("Camera Forward X: %f, Y: %f, Z: %f"), GetForwardVector().X, GetForwardVector().Y, GetForwardVector().Z);
+    UE_LOG(LogTemp, Warning, TEXT("Camera Forward X: %f, Y: %f, Z: %f"), GetWorldForward().X, GetWorldForward().Y, GetWorldForward().Z);
+}
+
+FVector UOrbitalCamera::GetWorldRight() const
+{
+    return GetRightVector();
+}
+
+FVector UOrbitalCamera::GetWorldForward() const
+{
+    FVector V = this->GetForwardVector();
+    UE_LOG(LogTemp, Warning, TEXT("Camera Forward X: %f, Y: %f, Z: %f"), GetForwardVector().X, GetForwardVector().Y, GetForwardVector().Z);
+    return V;
 }
 

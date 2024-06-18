@@ -53,10 +53,6 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	virtual FVector GetCameraRight() const override;
-
-	virtual FVector GetCameraForward() const override;
-
 	virtual USpringArmComponent* GetSpringArm() const override;
 
 	virtual void MoveStart(const FInputActionInstance& Value) override;

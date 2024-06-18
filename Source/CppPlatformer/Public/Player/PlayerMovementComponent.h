@@ -30,6 +30,8 @@ public:
 	void MovementEndXY();
 
 public:
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+	class UOrbitalCamera* Camera;
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, Category = "Physics")
 	bool bIsGravityAffected;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Physics")
@@ -50,8 +52,6 @@ public:
 	FRotator TargetRotation;
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Rotation")
 	FRotator CurrentRotation;
-	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "PlayerInterface")
-	TScriptInterface<class IPlayerReferenceGetter> PlayerGetterReference;
 
 protected:
 	void ApplyGravity();
@@ -61,10 +61,14 @@ protected:
 	bool GetGroundNormal(FVector& Normal);
 	bool DetectGround(FHitResult& Hit);
 	void SmoothRotation();
+	void HandleRotation();
 
 private:
 	const FVector Gravity = { 0, 0, -9.81f };
 	FVector LastMovementInput;
+	//stores the last velocity change (used to set "SmoothRotationFlag")
+	FVector2D CachedHorVelocity;
 	bool IsMoving;
+	//flag to avoid updating rotation even when unnecessary
 	bool SmoothRotationFlag;
 };

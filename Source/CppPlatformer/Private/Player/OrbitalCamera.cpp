@@ -51,9 +51,6 @@ void UOrbitalCamera::Rotate(FVector2D Value)
     }
 
     SpringArm->AddRelativeRotation(Diff);
-
-    UE_LOG(LogTemp, Warning, TEXT("Camera Forward X: %f, Y: %f, Z: %f"), GetForwardVector().X, GetForwardVector().Y, GetForwardVector().Z);
-    UE_LOG(LogTemp, Warning, TEXT("Camera Forward X: %f, Y: %f, Z: %f"), GetWorldForward().X, GetWorldForward().Y, GetWorldForward().Z);
 }
 
 FVector UOrbitalCamera::GetWorldRight() const
@@ -64,7 +61,6 @@ FVector UOrbitalCamera::GetWorldRight() const
 FVector UOrbitalCamera::GetWorldForward() const
 {
     FVector V = this->GetForwardVector();
-    UE_LOG(LogTemp, Warning, TEXT("Camera Forward X: %f, Y: %f, Z: %f"), GetForwardVector().X, GetForwardVector().Y, GetForwardVector().Z);
     return V;
 }
 

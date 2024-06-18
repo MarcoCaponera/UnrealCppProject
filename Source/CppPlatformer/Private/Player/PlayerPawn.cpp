@@ -36,6 +36,7 @@ APlayerPawn::APlayerPawn()
 	}
 	SkeletalMesh->SetRelativeRotation(FRotator(0, -90, 0));
 	SkeletalMesh->SetRelativeLocation(FVector(0, 0, -CapsuleComponent->GetUnscaledCapsuleHalfHeight()));
+	MovementComponent->Camera = OrbitalCamera;
 } 
 
 // Called when the game starts or when spawned
@@ -55,18 +56,6 @@ void APlayerPawn::Tick(float DeltaTime)
 void APlayerPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
-}
-
-FVector APlayerPawn::GetCameraRight() const
-{
-	return OrbitalCamera->GetWorldRight();
-}
-
-FVector APlayerPawn::GetCameraForward() const
-{
-	FVector V = OrbitalCamera->GetWorldForward();
-	//UE_LOG(LogTemp, Warning, TEXT("PLAYER - X: %f, Y: %f, Z: %f"), V.X, V.Y, V.Z);
-	return V;
 }
 
 USpringArmComponent* APlayerPawn::GetSpringArm() const

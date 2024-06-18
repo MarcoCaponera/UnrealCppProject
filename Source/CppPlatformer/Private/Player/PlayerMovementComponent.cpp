@@ -8,6 +8,7 @@
 #include "Player/PlayerPawn.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "Player/OrbitalCamera.h"
 #include "DrawDebugHelpers.h"
 
 
@@ -42,16 +43,7 @@ void UPlayerMovementComponent::TickComponent(float DeltaTime, ELevelTick TickTyp
 
 UPlayerMovementComponent::UPlayerMovementComponent()
 {
-	if (GetOwner())
-	{
-		IPlayerReferenceGetter* PlayerReference = Cast<IPlayerReferenceGetter>(GetOwner());
-		if (PlayerReference)
-		{
-			PlayerGetterReference.SetInterface(PlayerReference);
-			PlayerGetterReference.SetObject(GetOwner());
-		}
-	}
-	
+	CachedHorVelocity = FVector2D::ZeroVector;
 }
 
 void UPlayerMovementComponent::MovementEndXY()
@@ -77,12 +69,8 @@ void UPlayerMovementComponent::Move(FVector Direction)
 	{
 		AerialMove(Direction);
 	}
-	if (bDirectionChange)
-	{
-		SmoothRotationFlag = true;
-	}
 	LastMovementInput = Direction;
-	TargetRotation = LastMovementInput.Rotation();
+	HandleRotation();
 }
 
 void UPlayerMovementComponent::Jump()
@@ -105,8 +93,8 @@ void UPlayerMovementComponent::GroundMove(FVector Direction, bool bDirectionChan
 {
 	FVector Normal; 
 	GetGroundNormal(Normal);
-	FVector CameraForward = PlayerGetterReference->GetCameraForward();
-	FVector CameraRight = PlayerGetterReference->GetCameraRight();
+	FVector CameraForward = Camera->GetForwardVector();
+	FVector CameraRight = Camera->GetRightVector();
 	//UE_LOG(LogTemp, Warning, TEXT("MOVEMENT COMPONENT - X: %f, Y: %f, Z: %f"), CameraForward.X, CameraForward.Y, CameraForward.Z);
 	FVector ForwardToUse = -FVector::CrossProduct(Normal, CameraRight);
 	DrawDebugLine(GetWorld(), GetOwner()->GetActorLocation(), GetOwner()->GetActorLocation() + ForwardToUse * 100.f, FColor::Blue, false, -1.f, 0, 5.f);
@@ -183,6 +171,17 @@ void UPlayerMovementComponent::SmoothRotation()
 		{
 			SmoothRotationFlag = false;
 		}
+	}
+}
+
+void UPlayerMovementComponent::HandleRotation()
+{
+	FVector2D CurrHorVel = FVector2D(Velocity.X, Velocity.Y);
+	if (CurrHorVel != CachedHorVelocity)
+	{
+		SmoothRotationFlag = true;
+		CachedHorVelocity = CurrHorVel;
+		TargetRotation = FVector(Velocity.X, Velocity.Y, 0).Rotation();
 	}
 }
 

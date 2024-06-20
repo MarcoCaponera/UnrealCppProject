@@ -30,7 +30,7 @@ public:
 	void MovementEndXY();
 
 public:
-	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
+	UPROPERTY()
 	class UOrbitalCamera* Camera;
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, Category = "Physics")
 	bool bIsGravityAffected;
@@ -41,7 +41,9 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, Category = "Movement")
 	float MaxAerialMovementSpeed;
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, Category = "Movement")
-	float Acceleration;
+	float GroundAcceleration;
+	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, Category = "Movement")
+	float AirAcceleration;
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, Category = "Movement")
 	float JumpForce;
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Movement")
@@ -53,6 +55,7 @@ public:
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Rotation")
 	FRotator CurrentRotation;
 
+	
 protected:
 	void ApplyGravity();
 	void GroundMove(FVector Direction, bool bDirectionChange);
@@ -71,4 +74,5 @@ private:
 	bool IsMoving;
 	//flag to avoid updating rotation even when unnecessary
 	bool SmoothRotationFlag;
+	class UCapsuleComponent* OwnerCollider;
 };

@@ -8,6 +8,7 @@
 #include "Player/PlayerPawn.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "Components/CapsuleComponent.h"
 #include "Player/OrbitalCamera.h"
 #include "DrawDebugHelpers.h"
 
@@ -41,10 +42,12 @@ void UPlayerMovementComponent::TickComponent(float DeltaTime, ELevelTick TickTyp
 	SmoothRotation();
 }
 
+
 UPlayerMovementComponent::UPlayerMovementComponent()
 {
 	CachedHorVelocity = FVector2D::ZeroVector;
 }
+
 
 void UPlayerMovementComponent::MovementEndXY()
 {
@@ -95,6 +98,8 @@ void UPlayerMovementComponent::GroundMove(FVector Direction, bool bDirectionChan
 	GetGroundNormal(Normal);
 	FVector CameraForward = Camera->GetForwardVector();
 	FVector CameraRight = Camera->GetRightVector();
+	CameraForward.Z = 0;
+	CameraRight.Z = 0;
 	//UE_LOG(LogTemp, Warning, TEXT("MOVEMENT COMPONENT - X: %f, Y: %f, Z: %f"), CameraForward.X, CameraForward.Y, CameraForward.Z);
 	FVector ForwardToUse = -FVector::CrossProduct(Normal, CameraRight);
 	DrawDebugLine(GetWorld(), GetOwner()->GetActorLocation(), GetOwner()->GetActorLocation() + ForwardToUse * 100.f, FColor::Blue, false, -1.f, 0, 5.f);
@@ -107,15 +112,21 @@ void UPlayerMovementComponent::GroundMove(FVector Direction, bool bDirectionChan
 	{
 		Velocity = VelocityDirection * CurrentHorSpeed;
 	}
-	CurrentHorSpeed += Acceleration;
+	CurrentHorSpeed += GroundAcceleration;
 	Velocity = VelocityDirection * CurrentHorSpeed;
 	ClampHorVelocity(MaxWalkMovementSpeed);
 }
 
 void UPlayerMovementComponent::AerialMove(FVector Direction)
 {
-	Velocity += Direction * Acceleration;
-	CurrentHorSpeed += Acceleration;
+	FVector CameraForward = Camera->GetForwardVector();
+	FVector CameraRight = Camera->GetRightVector();
+	CameraForward.Z = 0;
+	CameraRight.Z = 0;
+	FVector VelocityDirection = CameraForward * Direction.X + CameraRight * Direction.Y;
+	VelocityDirection.Normalize();
+	Velocity += VelocityDirection * AirAcceleration;
+	CurrentHorSpeed += AirAcceleration;
 	ClampHorVelocity(MaxAerialMovementSpeed);
 }
 
@@ -146,7 +157,7 @@ bool UPlayerMovementComponent::DetectGround(FHitResult& Hit)
 {
 	FVector Start = UpdatedComponent->GetComponentLocation();
 	FVector End = Start - FVector::UpVector * 110;
-	DrawDebugLine(GetWorld(), Start, End, FColor::Black, false, -1.f, 0, 5.f);
+	DrawDebugLine(GetWorld(), Start,  End, FColor::Black, false, 0.0f, 0, 5);
 	if (GetWorld()->LineTraceSingleByChannel(Hit, Start, End, ECollisionChannel::ECC_GameTraceChannel2))
 	{
 		bIsGrounded = true;
@@ -156,7 +167,6 @@ bool UPlayerMovementComponent::DetectGround(FHitResult& Hit)
 		bIsGrounded = false;
 	}
 	return bIsGrounded;
-
 }
 
 void UPlayerMovementComponent::SmoothRotation()

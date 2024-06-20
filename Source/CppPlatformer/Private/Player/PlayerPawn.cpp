@@ -63,6 +63,11 @@ USpringArmComponent* APlayerPawn::GetSpringArm() const
 	return SpringArm;
 }
 
+UPlayerMovementComponent* APlayerPawn::GetPlayerMovementComponent() const
+{
+	return MovementComponent;
+}
+
 void APlayerPawn::MoveStart(const FInputActionInstance& Input)
 {
 	FVector2D Value = Input.GetValue().Get<FVector2D>();

@@ -9,3 +9,8 @@ USpringArmComponent* IPlayerReferenceGetter::GetSpringArm() const
 {
 	return nullptr;
 }
+
+UPlayerMovementComponent* IPlayerReferenceGetter::GetPlayerMovementComponent() const
+{
+	return nullptr;
+}

@@ -7,7 +7,7 @@
 #include "PlayerReferenceGetter.generated.h"
 
 // This class does not need to be modified.
-UINTERFACE(MinimalAPI)
+UINTERFACE(MinimalAPI, meta = (CannotImplementInterfaceInBlueprint))
 class UPlayerReferenceGetter : public UInterface
 {
 	GENERATED_BODY()
@@ -25,4 +25,7 @@ public:
 
 	UFUNCTION()
 	virtual class USpringArmComponent* GetSpringArm() const;
+
+	UFUNCTION(BlueprintCallable)
+	virtual class UPlayerMovementComponent* GetPlayerMovementComponent() const;
 };

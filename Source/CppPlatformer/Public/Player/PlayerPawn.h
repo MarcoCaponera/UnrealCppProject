@@ -55,6 +55,9 @@ public:
 
 	virtual USpringArmComponent* GetSpringArm() const override;
 
+	UFUNCTION(BlueprintCallable)
+	virtual UPlayerMovementComponent* GetPlayerMovementComponent() const override;
+
 	virtual void MoveStart(const FInputActionInstance& Value) override;
 
 	virtual void MoveEnd(const FInputActionInstance& Value) override;

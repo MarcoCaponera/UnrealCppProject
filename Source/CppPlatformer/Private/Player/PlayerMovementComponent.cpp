@@ -27,18 +27,20 @@ void UPlayerMovementComponent::TickComponent(float DeltaTime, ELevelTick TickTyp
 	if (!SafeMoveUpdatedComponent(Velocity * DeltaTime, CurrentRotation, true, Hit))
 	{
 		ResolvePenetration(GetPenetrationAdjustment(Hit), Hit, UpdatedComponent->GetComponentRotation());
+		if (DetectGround(Hit))
+		{
+			Velocity.Z = 0;
+			if (!IsMoving)
+			{
+				Velocity.X = 0;
+				Velocity.Y = 0;
+			}
+			CurrentJump = 0;
+		}
 	}
 
 	//I prefer to detect ground collision with a line trace rather than with collision directly, gives me more control 
-	if (DetectGround(Hit))
-	{
-		Velocity.Z = 0;
-		if (!IsMoving)
-		{
-			Velocity.X = 0;
-			Velocity.Y = 0;
-		}
-	}
+	
 	SmoothRotation();
 }
 
@@ -78,10 +80,12 @@ void UPlayerMovementComponent::Move(FVector Direction)
 
 void UPlayerMovementComponent::Jump()
 {
-	if (bIsGrounded)
+	if (CanJump())
 	{
 		Velocity.Z = JumpForce;
 		bIsGrounded = false;
+		CurrentJump = CurrentJump + 1;
+		UE_LOG(LogTemp, Warning, TEXT("CurrentJump: %i"), CurrentJump);
 	}
 }
 
@@ -128,6 +132,7 @@ void UPlayerMovementComponent::AerialMove(FVector Direction)
 	Velocity += VelocityDirection * AirAcceleration;
 	CurrentHorSpeed += AirAcceleration;
 	ClampHorVelocity(MaxAerialMovementSpeed);
+	FHitResult Hit;
 }
 
 void UPlayerMovementComponent::ClampHorVelocity(float Max)
@@ -158,6 +163,7 @@ bool UPlayerMovementComponent::DetectGround(FHitResult& Hit)
 	FVector Start = UpdatedComponent->GetComponentLocation();
 	FVector End = Start - FVector::UpVector * 110;
 	DrawDebugLine(GetWorld(), Start,  End, FColor::Black, false, 0.0f, 0, 5);
+
 	if (GetWorld()->LineTraceSingleByChannel(Hit, Start, End, ECollisionChannel::ECC_GameTraceChannel2))
 	{
 		bIsGrounded = true;
@@ -193,6 +199,12 @@ void UPlayerMovementComponent::HandleRotation()
 		CachedHorVelocity = CurrHorVel;
 		TargetRotation = FVector(Velocity.X, Velocity.Y, 0).Rotation();
 	}
+}
+
+bool UPlayerMovementComponent::CanJump()
+{
+	bool Result = CurrentJump < MaxJumps;
+	return Result;
 }
 
 

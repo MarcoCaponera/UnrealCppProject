@@ -48,6 +48,10 @@ public:
 	float JumpForce;
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Movement")
 	float CurrentHorSpeed;
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Movement")
+	int CurrentJump;
+	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, Category = "Movement")
+	int MaxJumps;
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, Category = "Rotation")
 	float RotationSpeed;
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Rotation")
@@ -65,6 +69,7 @@ protected:
 	bool DetectGround(FHitResult& Hit);
 	void SmoothRotation();
 	void HandleRotation();
+	bool CanJump();
 
 private:
 	const FVector Gravity = { 0, 0, -9.81f };

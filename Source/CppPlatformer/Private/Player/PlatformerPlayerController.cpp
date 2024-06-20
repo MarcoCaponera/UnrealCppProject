@@ -36,7 +36,7 @@ void APlatformerPlayerController::SetupInputComponent()
 		}
 		if (JumpAction)
 		{
-			EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Triggered, this, &APlatformerPlayerController::JumpCallback);
+			EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &APlatformerPlayerController::JumpCallback);
 		}
 		if (LookAction)
 		{

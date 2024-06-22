@@ -27,18 +27,18 @@ void UPlayerMovementComponent::TickComponent(float DeltaTime, ELevelTick TickTyp
 	if (!SafeMoveUpdatedComponent(Velocity * DeltaTime, CurrentRotation, true, Hit))
 	{
 		ResolvePenetration(GetPenetrationAdjustment(Hit), Hit, UpdatedComponent->GetComponentRotation());
-		if (DetectGround(Hit))
-		{
-			Velocity.Z = 0;
-			if (!IsMoving)
-			{
-				Velocity.X = 0;
-				Velocity.Y = 0;
-			}
-			CurrentJump = 0;
-		}
 	}
 
+
+	if (DetectGround(Hit))
+	{
+		if (!IsMoving)
+		{
+			Velocity.X = 0;
+			Velocity.Y = 0;
+		}
+		CurrentJump = 0;
+	}
 	//I prefer to detect ground collision with a line trace rather than with collision directly, gives me more control 
 	
 	SmoothRotation();
@@ -56,8 +56,7 @@ void UPlayerMovementComponent::MovementEndXY()
 	IsMoving = false;
 	if (bIsGrounded)
 	{
-		Velocity.X = 0;
-		Velocity.Y = 0;
+		Velocity = FVector::ZeroVector;
 		CurrentHorSpeed = 0;
 	}
 }
@@ -100,6 +99,7 @@ void UPlayerMovementComponent::GroundMove(FVector Direction, bool bDirectionChan
 {
 	FVector Normal; 
 	GetGroundNormal(Normal);
+	Normal.Normalize();
 	FVector CameraForward = Camera->GetForwardVector();
 	FVector CameraRight = Camera->GetRightVector();
 	CameraForward.Z = 0;
@@ -161,9 +161,9 @@ bool UPlayerMovementComponent::GetGroundNormal(FVector& Normal)
 bool UPlayerMovementComponent::DetectGround(FHitResult& Hit)
 {
 	FVector Start = UpdatedComponent->GetComponentLocation();
-	FVector End = Start - FVector::UpVector * 110;
-	DrawDebugLine(GetWorld(), Start,  End, FColor::Black, false, 0.0f, 0, 5);
-
+	Start = Start + FVector(Velocity.X, Velocity.Y, 0).GetSafeNormal() * 10.f;
+	FVector End = Start - (FVector::UpVector * 120);
+	DrawDebugLine(GetWorld(), Start, End, FColor::Black, false, 0.1f, 0, 1);
 	if (GetWorld()->LineTraceSingleByChannel(Hit, Start, End, ECollisionChannel::ECC_GameTraceChannel2))
 	{
 		bIsGrounded = true;

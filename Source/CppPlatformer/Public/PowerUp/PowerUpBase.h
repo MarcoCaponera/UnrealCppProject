@@ -12,12 +12,13 @@ class CPPPLATFORMER_API APowerUpBase : public AActor
 	GENERATED_BODY()
 	
 public:	
-	// Sets default values for this actor's properties
+	// Sets default values for this actor's properties 
 	APowerUpBase();
 
 protected:
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly)
 	class UStaticMeshComponent* Mesh;
+
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly)
 	class UBoxComponent* Collider;
 
@@ -30,11 +31,10 @@ protected:
 		UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,
 		const FHitResult& SweepResult);
 
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 	virtual void ActivateEffect(AActor* OtherActor);
 
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-
 };

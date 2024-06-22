@@ -97,3 +97,8 @@ void APlayerPawn::Look(const FInputActionInstance& Input)
 	}
 }
 
+void APlayerPawn::AddJump()
+{	
+	MovementComponent->MaxAerialJumps = MovementComponent->MaxAerialJumps + 1;
+}
+

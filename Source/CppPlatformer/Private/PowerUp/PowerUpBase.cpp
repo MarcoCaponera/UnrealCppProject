@@ -2,6 +2,8 @@
 
 #include "PowerUp/PowerUpBase.h"
 #include "Components/BoxComponent.h"
+#include "Components/BillboardComponent.h"
+#include "Components/TextRenderComponent.h"
 
 // Sets default values
 APowerUpBase::APowerUpBase()

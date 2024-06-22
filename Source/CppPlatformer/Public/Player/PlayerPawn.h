@@ -7,10 +7,11 @@
 #include "Player/PlayerInputActions.h"
 #include "InputMappingContext.h"
 #include "Player/PlayerReferenceGetter.h"
+#include "Player/PlayerInteractions.h"
 #include "PlayerPawn.generated.h"
 
 UCLASS()
-class CPPPLATFORMER_API APlayerPawn : public APawn, public IPlayerInputActions, public IPlayerReferenceGetter
+class CPPPLATFORMER_API APlayerPawn : public APawn, public IPlayerInputActions, public IPlayerReferenceGetter, public IPlayerInteractions
 {
 	GENERATED_BODY()
 
@@ -65,4 +66,6 @@ public:
 	virtual void Jump(const FInputActionInstance& Input) override;
 
 	virtual void Look(const FInputActionInstance& Input) override;
+
+	virtual void AddJump() override;
 };

@@ -27,20 +27,24 @@ void UPlayerMovementComponent::TickComponent(float DeltaTime, ELevelTick TickTyp
 	if (!SafeMoveUpdatedComponent(Velocity * DeltaTime, CurrentRotation, true, Hit))
 	{
 		ResolvePenetration(GetPenetrationAdjustment(Hit), Hit, UpdatedComponent->GetComponentRotation());
-	}
 
-
+		if (Hit.Normal.Z >= 0)
+		{
+			LastGroundNormal = Hit.ImpactNormal;
+			bIsGrounded = true;
+		}
+	} 
+	
 	if (DetectGround(Hit))
 	{
-		if (!IsMoving)
+		if (!bIsMoving)
 		{
 			Velocity.X = 0;
 			Velocity.Y = 0;
+			CurrentHorSpeed = 0;
 		}
 		CurrentJump = 0;
 	}
-	//I prefer to detect ground collision with a line trace rather than with collision directly, gives me more control 
-	
 	SmoothRotation();
 }
 
@@ -53,7 +57,7 @@ UPlayerMovementComponent::UPlayerMovementComponent()
 
 void UPlayerMovementComponent::MovementEndXY()
 {
-	IsMoving = false;
+	bIsMoving = false;
 	if (bIsGrounded)
 	{
 		Velocity = FVector::ZeroVector;
@@ -63,7 +67,7 @@ void UPlayerMovementComponent::MovementEndXY()
 
 void UPlayerMovementComponent::Move(FVector Direction)
 {
-	IsMoving = true;
+	bIsMoving = true;
 	bool bDirectionChange = LastMovementInput != Direction;
 	if (bIsGrounded)
 	{
@@ -105,9 +109,9 @@ void UPlayerMovementComponent::GroundMove(FVector Direction, bool bDirectionChan
 	CameraForward.Z = 0;
 	CameraRight.Z = 0;
 	//UE_LOG(LogTemp, Warning, TEXT("MOVEMENT COMPONENT - X: %f, Y: %f, Z: %f"), CameraForward.X, CameraForward.Y, CameraForward.Z);
-	FVector ForwardToUse = -FVector::CrossProduct(Normal, CameraRight);
+	FVector ForwardToUse = -FVector::CrossProduct(LastGroundNormal, CameraRight);
 	DrawDebugLine(GetWorld(), GetOwner()->GetActorLocation(), GetOwner()->GetActorLocation() + ForwardToUse * 100.f, FColor::Blue, false, -1.f, 0, 5.f);
-	FVector RightToUse = FVector::CrossProduct(Normal, CameraForward);
+	FVector RightToUse = FVector::CrossProduct(LastGroundNormal, CameraForward);
 	DrawDebugLine(GetWorld(), GetOwner()->GetActorLocation(), GetOwner()->GetActorLocation() + RightToUse * 100.f, FColor::Purple, false, -1.f, 0, 5.f);
 	FVector VelocityDirection = ForwardToUse * Direction.X + RightToUse * Direction.Y;
 	DrawDebugLine(GetWorld(), GetOwner()->GetActorLocation(), GetOwner()->GetActorLocation() + VelocityDirection * 100.f, FColor::Green, false, -1.f, 0, 5.f);
@@ -132,7 +136,6 @@ void UPlayerMovementComponent::AerialMove(FVector Direction)
 	Velocity += VelocityDirection * AirAcceleration;
 	CurrentHorSpeed += AirAcceleration;
 	ClampHorVelocity(MaxAerialMovementSpeed);
-	FHitResult Hit;
 }
 
 void UPlayerMovementComponent::ClampHorVelocity(float Max)
@@ -161,18 +164,19 @@ bool UPlayerMovementComponent::GetGroundNormal(FVector& Normal)
 bool UPlayerMovementComponent::DetectGround(FHitResult& Hit)
 {
 	FVector Start = UpdatedComponent->GetComponentLocation();
-	Start = Start + FVector(Velocity.X, Velocity.Y, 0).GetSafeNormal() * 10.f;
-	FVector End = Start - (FVector::UpVector * 120);
+	FVector End = Start - (FVector::UpVector * 110);
 	DrawDebugLine(GetWorld(), Start, End, FColor::Black, false, 0.1f, 0, 1);
-	if (GetWorld()->LineTraceSingleByChannel(Hit, Start, End, ECollisionChannel::ECC_GameTraceChannel2))
+	FHitResult NewHit;
+	if (GetWorld()->LineTraceSingleByChannel(NewHit, Start, End, ECollisionChannel::ECC_GameTraceChannel2))
 	{
-		bIsGrounded = true;
+		return true;
 	}
-	else 
+	if (bIsGrounded) 
 	{
-		bIsGrounded = false;
+		Velocity.Z = 0;
 	}
-	return bIsGrounded;
+	bIsGrounded = false;
+	return false;
 }
 
 void UPlayerMovementComponent::SmoothRotation()
@@ -203,7 +207,7 @@ void UPlayerMovementComponent::HandleRotation()
 
 bool UPlayerMovementComponent::CanJump()
 {
-	bool Result = CurrentJump < MaxJumps;
+	bool Result = CurrentJump < MaxAerialJumps || bIsGrounded;
 	return Result;
 }
 

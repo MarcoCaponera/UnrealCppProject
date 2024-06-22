@@ -51,7 +51,7 @@ public:
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Movement")
 	int CurrentJump;
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, Category = "Movement")
-	int MaxJumps;
+	int MaxAerialJumps;
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly, Category = "Rotation")
 	float RotationSpeed;
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Category = "Rotation")
@@ -76,8 +76,9 @@ private:
 	FVector LastMovementInput;
 	//stores the last velocity change (used to set "SmoothRotationFlag")
 	FVector2D CachedHorVelocity;
-	bool IsMoving;
+	bool bIsMoving;
 	//flag to avoid updating rotation even when unnecessary
 	bool SmoothRotationFlag;
 	class UCapsuleComponent* OwnerCollider;
+	FVector LastGroundNormal;
 };

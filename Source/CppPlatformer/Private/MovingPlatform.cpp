@@ -3,6 +3,7 @@
 
 #include "MovingPlatform.h"
 #include "Components/TimelineComponent.h"
+#include "Curves/RichCurve.h"
 #include "Curves/CurveFloat.h"
 
 AMovingPlatform::AMovingPlatform()
@@ -19,9 +20,11 @@ void AMovingPlatform::BeginPlay()
 	EndPoint = StartPoint + EndPoint;
 	PlayForward = false;
 
+	FRichCurve RichCurve = FRichCurve();
+	RichCurve.AddKey(0.f, 0.f);
+	RichCurve.AddKey(Duration, 1.0f);
 	MovementCurve = NewObject<UCurveFloat>(this);
-	MovementCurve->FloatCurve.UpdateOrAddKey(0.f, 0.f);
-	MovementCurve->FloatCurve.UpdateOrAddKey(Duration, 1.f);
+	MovementCurve->FloatCurve = RichCurve;
 
 	FOnTimelineFloat ProgressUpdate;
 	ProgressUpdate.BindUFunction(this, FName("UpdateMove"));
@@ -45,14 +48,12 @@ void AMovingPlatform::Tick(float DeltaTime)
 
 void AMovingPlatform::UpdateMove(float Alpha)
 {
-	UE_LOG(LogTemp, Warning, TEXT("alpha: %f"), Alpha);
 	FVector NewLocation = FMath::Lerp(StartPoint, EndPoint, Alpha);
 	SetActorLocation(NewLocation);
 }
 
 void AMovingPlatform::FinishedMove()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Move Finished"))
 	if (!bIsOneShot)
 	{
 		if (PlayForward)
@@ -71,7 +72,6 @@ void AMovingPlatform::FinishedMove()
 void AMovingPlatform::StartMove()
 {
 	MoveTimeline.PlayFromStart();
-	UE_LOG(LogTemp, Warning, TEXT("Move Started"))
 }
 
 void AMovingPlatform::RevertMove()

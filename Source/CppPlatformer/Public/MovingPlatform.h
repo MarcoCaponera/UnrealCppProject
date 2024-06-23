@@ -36,10 +36,11 @@ public:
 	UFUNCTION()
 	void FinishedMove();
 
+	virtual void Tick(float DeltaTime) override;
+
+
 protected:
 	virtual void BeginPlay() override;
-
-	virtual void Tick(float DeltaTime) override;
 
 	void StartMove();
 
@@ -48,6 +49,8 @@ protected:
 protected:
 	bool bMove;
 	FTimeline MoveTimeline;
+
+	UPROPERTY()
 	class UCurveFloat* MovementCurve;
 
 private:

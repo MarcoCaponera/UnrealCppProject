@@ -8,6 +8,7 @@
 #include "Components/CapsuleComponent.h"
 #include "PhysicalMaterials/PhysicalMaterial.h"
 #include "Player/OrbitalCamera.h"
+#include "Props/Interactable/Interactable.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
 
@@ -94,6 +95,22 @@ void APlayerPawn::Look(const FInputActionInstance& Input)
 	if (Value != FVector2D::ZeroVector)
 	{
 		OrbitalCamera->Rotate(Value);
+	}
+}
+
+void APlayerPawn::Interact(const FInputActionInstance& Input)
+{
+	FHitResult Hit;
+	FVector TraceStart = GetActorLocation();
+	FVector TraceEnd = TraceStart + GetActorForwardVector() * InteractionRange;
+	DrawDebugLine(GetWorld(), TraceStart, TraceEnd, FColor::Cyan, false, 1.f, 0, 5);
+	if (GetWorld()->LineTraceSingleByChannel(Hit, GetActorLocation(), TraceEnd, ECollisionChannel::ECC_GameTraceChannel8))
+	{
+		IInteractable* IHit = Cast<IInteractable>(Hit.GetActor());
+		if (IHit)
+		{
+			IHit->Interact();
+		}
 	}
 }
 

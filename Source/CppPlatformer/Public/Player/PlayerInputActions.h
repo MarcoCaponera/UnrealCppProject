@@ -34,4 +34,7 @@ public:
 
 	UFUNCTION()
 	virtual void Look(const FInputActionInstance& InputDirection);
+
+	UFUNCTION()
+	virtual void Interact(const FInputActionInstance& Input);
 };

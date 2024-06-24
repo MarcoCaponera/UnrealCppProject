@@ -4,6 +4,7 @@
 #include "MovingPlatform.h"
 #include "Components/TimelineComponent.h"
 #include "Curves/RichCurve.h"
+#include "Props/Interactable/Interactable.h"
 #include "Curves/CurveFloat.h"
 
 AMovingPlatform::AMovingPlatform()
@@ -35,7 +36,34 @@ void AMovingPlatform::BeginPlay()
 	MoveTimeline.AddInterpFloat(MovementCurve, ProgressUpdate);
 	MoveTimeline.SetTimelineFinishedFunc(FinishedEvent);
 
+	if (MoveInstigator)
+	{
+		IInteractable* Interactable = Cast<IInteractable>(MoveInstigator);
+		if (Interactable)
+		{
+			Interactable->Subscribe(this, FName("InitMove"));
+		}
+	}
+
 	if (bAutoActivate) 
+	{
+		InitMove();
+	}
+}
+
+bool AMovingPlatform::StartTimerIfDelay()
+{
+	if (Delay > 0)
+	{
+		GetWorldTimerManager().SetTimer(TimerHandle, this, &AMovingPlatform::StartMove, Delay, false, Delay);
+		return true;
+	}
+	return false;
+}
+
+void AMovingPlatform::InitMove()
+{
+	if (!StartTimerIfDelay())
 	{
 		StartMove();
 	}
@@ -54,6 +82,7 @@ void AMovingPlatform::UpdateMove(float Alpha)
 
 void AMovingPlatform::FinishedMove()
 {
+
 	if (!bIsOneShot)
 	{
 		if (PlayForward)

@@ -18,7 +18,7 @@ public:
 	AMovingPlatform();
 
 public:
-	UPROPERTY(BlueprintReadWrite, EditInstanceOnly, Category = "Checkpoints", Meta = (MakeEditWidget = true))
+	UPROPERTY(BlueprintReadWrite, EditInstanceOnly, Category = "Checkpoint", Meta = (MakeEditWidget = true))
 	FVector EndPoint;
 
 	UPROPERTY(BlueprintReadWrite, EditInstanceOnly, Category = "Movement")
@@ -29,6 +29,12 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Movement")
 	float Duration;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Movement")
+	float Delay;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Instigator", Meta = (MakeEditWidget = true))
+	AActor* MoveInstigator;
 
 	UFUNCTION()
 	void UpdateMove(float Alpha);
@@ -42,6 +48,15 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
+	/// <summary>
+	/// returns true if timer started (delay > 0)
+	/// </summary>
+	/// <returns></returns>
+	bool StartTimerIfDelay();
+
+	UFUNCTION()
+	void InitMove();
+
 	void StartMove();
 
 	void RevertMove();
@@ -52,6 +67,9 @@ protected:
 
 	UPROPERTY()
 	class UCurveFloat* MovementCurve;
+
+	UPROPERTY()
+	FTimerHandle TimerHandle;
 
 private:
 	int CurrentCheckPoint = 0;

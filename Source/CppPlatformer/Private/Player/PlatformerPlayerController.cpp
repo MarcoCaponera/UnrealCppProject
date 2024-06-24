@@ -42,6 +42,10 @@ void APlatformerPlayerController::SetupInputComponent()
 		{
 			EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &APlatformerPlayerController::LookCallback);
 		}
+		if (InteractAction)
+		{
+			EnhancedInputComponent->BindAction(InteractAction, ETriggerEvent::Started, this, &APlatformerPlayerController::InteractCallback);
+		}
 	}
 
 	
@@ -76,4 +80,9 @@ void APlatformerPlayerController::JumpCallback(const FInputActionInstance& Value
 void APlatformerPlayerController::LookCallback(const FInputActionInstance& Value)
 {
 	PlayerInputActionsInstance->Look(Value);
+}
+
+void APlatformerPlayerController::InteractCallback(const FInputActionInstance& Value)
+{
+	PlayerInputActionsInstance->Interact(Value);
 }

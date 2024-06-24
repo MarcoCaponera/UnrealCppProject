@@ -43,7 +43,8 @@ protected:
 	UPROPERTY(BlueprintReadWrite)
 	class UArrowComponent* ForwardArrow;
 
-
+	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly)
+	float InteractionRange;
 
 	const FString SkeletalMeshPath = "/Game/MyContent/Meshes/SKM_PlayerMesh.SKM_PlayerMesh";
 
@@ -66,6 +67,8 @@ public:
 	virtual void Jump(const FInputActionInstance& Input) override;
 
 	virtual void Look(const FInputActionInstance& Input) override;
+
+	virtual void Interact(const FInputActionInstance& Input) override;
 
 	virtual void AddJump() override;
 };

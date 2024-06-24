@@ -25,3 +25,8 @@ void IPlayerInputActions::Look(const FInputActionInstance& InputDirection)
 {
 	return;
 }
+
+void IPlayerInputActions::Interact(const FInputActionInstance& Input)
+{
+	return;
+}

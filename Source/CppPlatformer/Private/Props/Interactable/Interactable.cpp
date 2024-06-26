@@ -5,8 +5,13 @@
 
 // Add default functionality here for any IInteractable functions that are not pure virtual.
 
-void IInteractable::Interact()
+void IInteractable::Interact(UInteractionArgsBase* InteractionArgs)
 {
+}
+
+EInteractionType IInteractable::GetInteractionType()
+{
+	return EInteractionType::None;
 }
 
 void IInteractable::Subscribe(TObjectPtr<UObject> InObject, const FName& FunctionName)

@@ -10,6 +10,9 @@
 #include "Player/OrbitalCamera.h"
 #include "Props/Interactable/Interactable.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "Props/Interactable/ButtonInteractionArgs.h"
+#include "Props/Interactable/InteractionArgsBase.h"
+#include "Props/Interactable/PushInteractionArgs.h"
 #include "Camera/CameraComponent.h"
 
 // Sets default values
@@ -109,7 +112,25 @@ void APlayerPawn::Interact(const FInputActionInstance& Input)
 		IInteractable* IHit = Cast<IInteractable>(Hit.GetActor());
 		if (IHit)
 		{
-			IHit->Interact();
+			EInteractionType InteractionType = IHit->GetInteractionType();
+
+			switch (InteractionType)
+			{
+				case EInteractionType::Button:
+				{
+					UButtonInteractionArgs* ButtonArgs = NewObject<UButtonInteractionArgs>(UButtonInteractionArgs::StaticClass());
+					ButtonArgs->InitButtonInteractionArgs(this);
+					IHit->Interact(ButtonArgs);
+					break;
+				}
+				case EInteractionType::Push:
+				{
+					UPushInteractionArgs* PushArgs = NewObject<UPushInteractionArgs>(UPushInteractionArgs::StaticClass());
+					PushArgs->InitPushInteractionArgs(this, (TraceEnd - TraceStart).GetSafeNormal(), PushForce, Hit.ImpactPoint);
+					IHit->Interact(PushArgs);
+					break;
+				}
+			}
 		}
 	}
 }

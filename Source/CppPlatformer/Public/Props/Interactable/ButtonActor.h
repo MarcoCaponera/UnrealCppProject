@@ -36,7 +36,9 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	virtual void Interact() override;
+	virtual void Interact(UInteractionArgsBase* IntearctionArgs) override;
+
+	virtual EInteractionType GetInteractionType() override;
 
 	virtual void Subscribe(TObjectPtr<UObject> InObject, const FName& FunctionName) override;
 

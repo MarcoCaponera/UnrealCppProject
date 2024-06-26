@@ -46,6 +46,9 @@ protected:
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly)
 	float InteractionRange;
 
+	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly)
+	float PushForce;
+
 	const FString SkeletalMeshPath = "/Game/MyContent/Meshes/SKM_PlayerMesh.SKM_PlayerMesh";
 
 public:	

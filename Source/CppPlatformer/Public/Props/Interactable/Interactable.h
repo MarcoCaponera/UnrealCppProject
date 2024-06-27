@@ -12,6 +12,7 @@ enum class EInteractionType : uint8
 {
 	Button  UMETA(DisplayName = "Button"),
 	Push	UMETA(DisplayName = "Push"),
+	Inspect UMETA(DisplayName = "Inspect"),
 	None    UMETA(DisplayName = "None")
 };
 

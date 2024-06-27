@@ -13,6 +13,7 @@
 #include "Props/Interactable/ButtonInteractionArgs.h"
 #include "Props/Interactable/InteractionArgsBase.h"
 #include "Props/Interactable/PushInteractionArgs.h"
+#include "Props/Interactable/InspectInteractionArgs.h"
 #include "Camera/CameraComponent.h"
 
 // Sets default values
@@ -128,6 +129,14 @@ void APlayerPawn::Interact(const FInputActionInstance& Input)
 					UPushInteractionArgs* PushArgs = NewObject<UPushInteractionArgs>(UPushInteractionArgs::StaticClass());
 					PushArgs->InitPushInteractionArgs(this, (TraceEnd - TraceStart).GetSafeNormal(), PushForce, Hit.ImpactPoint);
 					IHit->Interact(PushArgs);
+					break;
+				}
+				case EInteractionType::Inspect:
+				{
+					UInspectInteractionArgs* InspectArgs = NewObject<UInspectInteractionArgs>(UInspectInteractionArgs::StaticClass());
+					FVector TargetPos = OrbitalCamera->GetComponentLocation() + OrbitalCamera->GetForwardVector();
+					InspectArgs->InitInspectInteractionArgs(this, OrbitalCamera,TargetPos);
+					IHit->Interact(InspectArgs);
 					break;
 				}
 			}

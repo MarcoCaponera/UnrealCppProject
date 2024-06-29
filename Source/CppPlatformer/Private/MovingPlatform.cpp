@@ -4,7 +4,7 @@
 #include "MovingPlatform.h"
 #include "Components/TimelineComponent.h"
 #include "Curves/RichCurve.h"
-#include "Props/Interactable/Interactable.h"
+#include "Props/Interactable/ButtonActor.h"
 #include "Curves/CurveFloat.h"
 
 AMovingPlatform::AMovingPlatform()
@@ -38,11 +38,7 @@ void AMovingPlatform::BeginPlay()
 
 	if (MoveInstigator)
 	{
-		IInteractable* Interactable = Cast<IInteractable>(MoveInstigator);
-		if (Interactable)
-		{
-			Interactable->Subscribe(this, FName("InitMove"));
-		}
+		MoveInstigator->Subscribe(this, FName("InitMove"));
 	}
 
 	if (bAutoActivate) 

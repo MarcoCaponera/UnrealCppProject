@@ -34,7 +34,7 @@ public:
 	float Delay;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Instigator", Meta = (MakeEditWidget = true))
-	AActor* MoveInstigator;
+	class AButtonActor* MoveInstigator;
 
 	UFUNCTION()
 	void UpdateMove(float Alpha);

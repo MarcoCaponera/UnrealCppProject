@@ -47,7 +47,7 @@ protected:
 protected:
 	void HandleReset();
 
-	void HandleInspect();
+	void HandleInspect(float DeltaTime);
 
 	void HandleInspectStart(UInteractionArgsBase* Args);
 

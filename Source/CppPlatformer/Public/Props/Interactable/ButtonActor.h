@@ -7,7 +7,7 @@
 #include "Interactable.h"
 #include "ButtonActor.generated.h"
 
-DECLARE_MULTICAST_DELEGATE(FActivationDelegate);
+DECLARE_MULTICAST_DELEGATE_OneParam(FActivationDelegate, AButtonActor*);
 UCLASS()
 class CPPPLATFORMER_API AButtonActor : public AActor, public IInteractable
 {
@@ -32,6 +32,14 @@ protected:
 
 	bool bTriggered;
 
+	FString TriggeredMaterialPah = "/Game/MyContent/Materials/M_Red.M_Red";
+
+	UPROPERTY()
+	UMaterial* StartingMaterial;
+
+	UPROPERTY()
+	UMaterial* TriggeredMaterial;
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -40,7 +48,7 @@ public:
 
 	virtual EInteractionType GetInteractionType() override;
 
-	virtual void Subscribe(TObjectPtr<UObject> InObject, const FName& FunctionName) override;
+	virtual void Subscribe(TObjectPtr<UObject> InObject, const FName& FunctionName);
 
 	FActivationDelegate Activate;
 };

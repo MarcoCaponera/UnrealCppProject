@@ -35,6 +35,4 @@ public:
 	virtual void Interact(UInteractionArgsBase* Args);
 
 	virtual EInteractionType GetInteractionType();
-
-	virtual void Subscribe(TObjectPtr<UObject> InObject, const FName& FunctionName);
 };

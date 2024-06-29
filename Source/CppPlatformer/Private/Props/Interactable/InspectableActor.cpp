@@ -44,7 +44,7 @@ void AInspectableActor::Tick(float DeltaTime)
 
 	if (bIsInspecting)
 	{
-		HandleInspect();
+		HandleInspect(DeltaTime);
 		if ((Inspector->GetActorLocation() - GetActorLocation()).SquaredLength() >= MaxRange)
 		{
 			HandleReset();
@@ -77,11 +77,11 @@ void AInspectableActor::HandleReset()
 	bIsInspecting = false;
 }
 
-void AInspectableActor::HandleInspect()
+void AInspectableActor::HandleInspect(float DeltaTime)
 {
 	FVector NewLocation = CurrentCamera->GetComponentLocation() + CurrentCamera->GetForwardVector() * InspectOffset;
 	NewLocation.Z = NewLocation.Z - HalfHeightExtent;
-	Mesh->SetWorldLocation(NewLocation);
+	Mesh->SetWorldLocation(FMath::Lerp(Mesh->GetComponentLocation(), NewLocation, DeltaTime * 25.f));
 }
 
 void AInspectableActor::HandleInspectStart(UInteractionArgsBase* Args)

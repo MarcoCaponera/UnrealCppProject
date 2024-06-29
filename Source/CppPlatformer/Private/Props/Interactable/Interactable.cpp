@@ -13,8 +13,3 @@ EInteractionType IInteractable::GetInteractionType()
 {
 	return EInteractionType::None;
 }
-
-void IInteractable::Subscribe(TObjectPtr<UObject> InObject, const FName& FunctionName)
-{
-
-}

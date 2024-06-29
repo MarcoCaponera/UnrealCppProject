@@ -16,6 +16,12 @@ AButtonActor::AButtonActor()
 	Collider->SetCollisionProfileName(FName("Interactable"));
 	SetRootComponent(Collider);
 	Mesh->SetupAttachment(RootComponent);
+
+	UMaterial* Mat = LoadObject<UMaterial>(nullptr, *TriggeredMaterialPah);
+	if (Mat)
+	{
+		TriggeredMaterial = Mat;
+	}
 }
 
 // Called when the game starts or when spawned
@@ -38,12 +44,13 @@ void AButtonActor::Interact(UInteractionArgsBase* InteractionArgs)
 	{
 		if (!bTriggered)
 		{
-			Activate.Broadcast();
 			bTriggered = true;
+			Mesh->SetMaterial(0, TriggeredMaterial);
+			Activate.Broadcast(this);
 		}
 		return;
 	}
-	Activate.Broadcast();
+	Activate.Broadcast(this);
 }
 
 EInteractionType AButtonActor::GetInteractionType()
@@ -55,4 +62,3 @@ void AButtonActor::Subscribe(TObjectPtr<UObject> InObject, const FName &Function
 {
 	Activate.AddUFunction(InObject, FunctionName);
 }
-

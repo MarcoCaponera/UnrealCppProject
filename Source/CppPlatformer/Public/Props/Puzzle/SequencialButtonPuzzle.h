@@ -31,6 +31,12 @@ protected:
 
 	FString CorrectMaterialPath = "/Game/MyContent/Materials/M_Green.M_Green";
 
+	const FString CorrectSoundPath = "/Game/MyContent/Sound/CorrectAnswerSound.CorrectAnswerSound";
+	const FString WrongSoundPath = "/Game/MyContent/Sound/WrongAnswerSound.WrongAnswerSound";
+
+	USoundWave* CorrectSound;
+	USoundWave* WrongSound;
+
 	UPROPERTY()
 	UMaterial* CorrectMaterial;
 

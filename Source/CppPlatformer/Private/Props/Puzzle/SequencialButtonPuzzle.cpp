@@ -4,6 +4,7 @@
 #include "Props/Puzzle/SequencialButtonPuzzle.h"
 #include "Props/Puzzle/PuzzleButton.h"
 #include "Props/Interactable/Interactable.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 ASequencialButtonPuzzle::ASequencialButtonPuzzle()
@@ -15,6 +16,18 @@ ASequencialButtonPuzzle::ASequencialButtonPuzzle()
 	if (Mat)
 	{
 		CorrectMaterial = Mat;
+	}
+
+	USoundWave* SWave = LoadObject<USoundWave>(nullptr, *CorrectSoundPath);
+	if (SWave)
+	{
+		CorrectSound = SWave;
+	}
+
+	SWave = LoadObject<USoundWave>(nullptr, *WrongSoundPath);
+	if (SWave)
+	{
+		WrongSound = SWave;
 	}
 }
 
@@ -44,6 +57,7 @@ void ASequencialButtonPuzzle::OnButtonPressed(APuzzleButton* Caller)
 				{
 					Elems.Key->SetMaterial(CorrectMaterial);
 				}
+				UGameplayStatics::PlaySound2D(GetWorld(), CorrectSound);
 			}
 			return;
 
@@ -53,6 +67,7 @@ void ASequencialButtonPuzzle::OnButtonPressed(APuzzleButton* Caller)
 		{
 			Elems.Key->ResetMe();
 		}
+		UGameplayStatics::PlaySound2D(GetWorld(), WrongSound);
 	}
 }
 

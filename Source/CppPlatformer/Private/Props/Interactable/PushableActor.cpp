@@ -17,7 +17,7 @@ APushableActor::APushableActor()
 	Collider->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 	SetRootComponent(Collider);
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
-	Mesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	Mesh->SetCollisionProfileName(FName("BlockAll"));
 	Mesh->SetupAttachment(RootComponent);
 }
 

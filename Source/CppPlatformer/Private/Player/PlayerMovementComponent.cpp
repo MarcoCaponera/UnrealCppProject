@@ -24,7 +24,7 @@ void UPlayerMovementComponent::TickComponent(float DeltaTime, ELevelTick TickTyp
 	
 
 	FHitResult Hit;
-	if (!SafeMoveUpdatedComponent(Velocity * DeltaTime, CurrentRotation, true, Hit))
+	if (!SafeMoveUpdatedComponent((Velocity + FVector(0.f, 0.f, 0.1f)) * DeltaTime, CurrentRotation, true, Hit))
 	{
 		ResolvePenetration(GetPenetrationAdjustment(Hit), Hit, UpdatedComponent->GetComponentRotation());
 

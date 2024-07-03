@@ -8,10 +8,11 @@
 #include "InputMappingContext.h"
 #include "Player/PlayerReferenceGetter.h"
 #include "Player/PlayerInteractions.h"
+#include "SaveGameSystem/Savable.h"
 #include "PlayerPawn.generated.h"
 
 UCLASS()
-class CPPPLATFORMER_API APlayerPawn : public APawn, public IPlayerInputActions, public IPlayerReferenceGetter, public IPlayerInteractions
+class CPPPLATFORMER_API APlayerPawn : public APawn, public IPlayerInputActions, public IPlayerReferenceGetter, public IPlayerInteractions, public ISavable
 {
 	GENERATED_BODY()
 
@@ -62,6 +63,15 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	virtual UPlayerMovementComponent* GetPlayerMovementComponent() const override;
+
+	UFUNCTION(BlueprintCallable)
+	virtual class USaveGameDataBase* GetData() override;
+
+	UFUNCTION(BlueprintCallable)
+	virtual void RestoreData(USaveGameDataBase* Data) override;
+
+	UFUNCTION(BlueprintCallable)
+	virtual int GetPlayerNumJumps() const override;
 
 	virtual void MoveStart(const FInputActionInstance& Value) override;
 

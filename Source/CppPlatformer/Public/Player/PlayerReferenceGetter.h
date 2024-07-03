@@ -28,4 +28,7 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	virtual class UPlayerMovementComponent* GetPlayerMovementComponent() const;
+
+	UFUNCTION(BlueprintCallable)
+	virtual int GetPlayerNumJumps() const;
 };

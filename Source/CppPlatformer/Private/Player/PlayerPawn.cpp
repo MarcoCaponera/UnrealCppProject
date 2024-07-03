@@ -14,6 +14,8 @@
 #include "Props/Interactable/InteractionArgsBase.h"
 #include "Props/Interactable/PushInteractionArgs.h"
 #include "Props/Interactable/InspectInteractionArgs.h"
+#include "SaveGameSystem/PlayerSaveGameData.h"
+#include "SaveGameSystem/SaveGameInterface.h"
 #include "Camera/CameraComponent.h"
 
 // Sets default values
@@ -49,6 +51,11 @@ void APlayerPawn::BeginPlay()
 {
 	Super::BeginPlay();
 
+	ISaveGameInterface* SaveGame = Cast<ISaveGameInterface>(GetGameInstance());
+	if (SaveGame)
+	{
+		SaveGame->AddSavable(this);
+	}
 }
 
 // Called every frame
@@ -71,6 +78,33 @@ USpringArmComponent* APlayerPawn::GetSpringArm() const
 UPlayerMovementComponent* APlayerPawn::GetPlayerMovementComponent() const
 {
 	return MovementComponent;
+}
+
+USaveGameDataBase* APlayerPawn::GetData()
+{
+	UPlayerSaveGameData* Data = NewObject<UPlayerSaveGameData>();
+	Data->ActorName = GetName();
+	Data->PlayerTransform = GetTransform();
+	Data->NumJumps = MovementComponent->MaxAerialJumps;
+	return Data;
+}
+
+void APlayerPawn::RestoreData(USaveGameDataBase* Data)
+{
+	if (Data)
+	{
+		UPlayerSaveGameData* PlayerData = Cast<UPlayerSaveGameData>(Data);
+		if (PlayerData)
+		{
+			SetActorTransform(PlayerData->PlayerTransform);
+			MovementComponent->MaxAerialJumps = PlayerData->NumJumps;
+		}
+	}
+}
+
+int APlayerPawn::GetPlayerNumJumps() const
+{
+	return MovementComponent->MaxAerialJumps;
 }
 
 void APlayerPawn::MoveStart(const FInputActionInstance& Input)

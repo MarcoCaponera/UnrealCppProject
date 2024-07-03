@@ -14,3 +14,8 @@ UPlayerMovementComponent* IPlayerReferenceGetter::GetPlayerMovementComponent() c
 {
 	return nullptr;
 }
+
+int IPlayerReferenceGetter::GetPlayerNumJumps() const
+{
+	return 0;
+}

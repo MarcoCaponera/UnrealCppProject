@@ -14,7 +14,6 @@
 #include "Props/Interactable/InteractionArgsBase.h"
 #include "Props/Interactable/PushInteractionArgs.h"
 #include "Props/Interactable/InspectInteractionArgs.h"
-#include "SaveGameSystem/PlayerSaveGameData.h"
 #include "SaveGameSystem/SaveGameInterface.h"
 #include "Camera/CameraComponent.h"
 
@@ -54,7 +53,7 @@ void APlayerPawn::BeginPlay()
 	ISaveGameInterface* SaveGame = Cast<ISaveGameInterface>(GetGameInstance());
 	if (SaveGame)
 	{
-		SaveGame->AddSavable(this);
+		SaveGame->AddSavablePlayer(this);
 	}
 }
 
@@ -80,26 +79,20 @@ UPlayerMovementComponent* APlayerPawn::GetPlayerMovementComponent() const
 	return MovementComponent;
 }
 
-USaveGameDataBase* APlayerPawn::GetData()
+FPlayerSaveGameDataBase APlayerPawn::GetPlayerData()
 {
-	UPlayerSaveGameData* Data = NewObject<UPlayerSaveGameData>();
-	Data->ActorName = GetName();
-	Data->PlayerTransform = GetTransform();
-	Data->NumJumps = MovementComponent->MaxAerialJumps;
+	FPlayerSaveGameDataBase Data = FPlayerSaveGameDataBase();
+	Data.ActorName = GetName();
+	Data.PlayerTransform = GetTransform();
+	Data.NumJumps = MovementComponent->MaxAerialJumps;
 	return Data;
 }
 
-void APlayerPawn::RestoreData(USaveGameDataBase* Data)
+void APlayerPawn::RestorePlayerData(FPlayerSaveGameDataBase Data)
 {
-	if (Data)
-	{
-		UPlayerSaveGameData* PlayerData = Cast<UPlayerSaveGameData>(Data);
-		if (PlayerData)
-		{
-			SetActorTransform(PlayerData->PlayerTransform);
-			MovementComponent->MaxAerialJumps = PlayerData->NumJumps;
-		}
-	}
+
+	SetActorTransform(Data.PlayerTransform);
+	MovementComponent->MaxAerialJumps = Data.NumJumps;
 }
 
 int APlayerPawn::GetPlayerNumJumps() const

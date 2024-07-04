@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/SaveGame.h"
+#include "SaveGameSystem/Savable.h"
 #include "PlatformerSaveGame.generated.h"
 
 /**
@@ -18,5 +19,8 @@ public:
 	UPlatformerSaveGame();
 
 	UPROPERTY()
-	TArray<class USaveGameDataBase*> ActorsData;
+	TArray<FPlayerSaveGameDataBase> PlayersData;
+
+	UPROPERTY()
+	TArray<FPowerUpSaveGameDataBase> PowerUpsData;
 };

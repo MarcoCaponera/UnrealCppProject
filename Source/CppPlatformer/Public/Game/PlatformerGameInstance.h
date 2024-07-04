@@ -24,9 +24,15 @@ public:
 	virtual void LoadGame() override;
 
 	UFUNCTION(BlueprintCallable)
-	virtual void AddSavable(TScriptInterface<ISavable> Item) override;
+	virtual void AddSavablePlayer(TScriptInterface<ISavable> Item) override;
+
+	UFUNCTION(BlueprintCallable)
+	virtual void AddSavablePowerUp(TScriptInterface<ISavable> Item) override;
 
 private:
 	UPROPERTY()
-	TArray<TScriptInterface<ISavable>> Savables;
+	TArray<TScriptInterface<ISavable>> PlayerSavables;
+
+	UPROPERTY()
+	TArray<TScriptInterface<ISavable>> PowerUpSavables;
 };

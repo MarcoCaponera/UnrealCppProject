@@ -65,10 +65,10 @@ public:
 	virtual UPlayerMovementComponent* GetPlayerMovementComponent() const override;
 
 	UFUNCTION(BlueprintCallable)
-	virtual class USaveGameDataBase* GetData() override;
+	virtual FPlayerSaveGameDataBase GetPlayerData() override;
 
 	UFUNCTION(BlueprintCallable)
-	virtual void RestoreData(USaveGameDataBase* Data) override;
+	virtual void RestorePlayerData(FPlayerSaveGameDataBase Data) override;
 
 	UFUNCTION(BlueprintCallable)
 	virtual int GetPlayerNumJumps() const override;

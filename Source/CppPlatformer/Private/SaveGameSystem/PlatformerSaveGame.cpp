@@ -5,5 +5,5 @@
 
 UPlatformerSaveGame::UPlatformerSaveGame()
 {
-	ActorsData.Empty();
+	PlayersData.Empty();
 }

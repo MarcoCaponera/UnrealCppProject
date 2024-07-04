@@ -13,6 +13,10 @@ void ISaveGameInterface::LoadGame()
 {
 }
 
-void ISaveGameInterface::AddSavable(TScriptInterface<ISavable> Savable)
+void ISaveGameInterface::AddSavablePlayer(TScriptInterface<ISavable> Savable)
+{
+}
+
+void ISaveGameInterface::AddSavablePowerUp(TScriptInterface<ISavable> Savable)
 {
 }

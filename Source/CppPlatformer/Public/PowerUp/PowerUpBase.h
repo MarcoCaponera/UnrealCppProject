@@ -4,16 +4,23 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "SaveGameSystem/Savable.h"
 #include "PowerUpBase.generated.h"
 
 UCLASS()
-class CPPPLATFORMER_API APowerUpBase : public AActor
+class CPPPLATFORMER_API APowerUpBase : public AActor, public ISavable
 {
 	GENERATED_BODY()
 	
 public:	
 	// Sets default values for this actor's properties 
 	APowerUpBase();
+
+	UFUNCTION()
+	virtual FPowerUpSaveGameDataBase GetPowerUpData();
+
+	UFUNCTION()
+	virtual void RestorePowerUpData(FPowerUpSaveGameDataBase Data);
 
 protected:
 	UPROPERTY(BlueprintReadWrite, EditDefaultsOnly)
@@ -37,4 +44,7 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+private:
+	bool bTaken;
 };

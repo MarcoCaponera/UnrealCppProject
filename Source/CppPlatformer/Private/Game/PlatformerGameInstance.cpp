@@ -4,7 +4,6 @@
 #include "Game/PlatformerGameInstance.h"
 #include "Kismet/GameplayStatics.h"
 #include "SaveGameSystem/PlatformerSaveGame.h"
-#include "SaveGameSystem/SaveGameDataBase.h"
 #include "GameFramework/SaveGame.h"
 
 void UPlatformerGameInstance::SaveGame()
@@ -15,9 +14,14 @@ void UPlatformerGameInstance::SaveGame()
 		UPlatformerSaveGame* PSaveGame = Cast<UPlatformerSaveGame>(SaveGame);
 		if (PSaveGame)
 		{
-			for (TScriptInterface<ISavable> Item : Savables)
+			for (TScriptInterface<ISavable> Item : PlayerSavables)
 			{
-				PSaveGame->ActorsData.Add(Item->GetData());
+				PSaveGame->PlayersData.Add(Item->GetPlayerData());
+			}
+			
+			for (TScriptInterface<ISavable> Item : PowerUpSavables)
+			{
+				PSaveGame->PowerUpsData.Add(Item->GetPowerUpData());
 			}
 
 			UGameplayStatics::SaveGameToSlot(PSaveGame, FString("Slot1"), 0);
@@ -33,13 +37,13 @@ void UPlatformerGameInstance::LoadGame()
 		UPlatformerSaveGame* PSaveGame = Cast<UPlatformerSaveGame>(SaveGame);
 		if (PSaveGame)
 		{
-			for (USaveGameDataBase* Data : PSaveGame->ActorsData)
+			for (FPlayerSaveGameDataBase Data : PSaveGame->PlayersData)
 			{
-				for (TScriptInterface<ISavable> Item : Savables)
+				for (TScriptInterface<ISavable> Item : PlayerSavables)
 				{
-					if (Item.GetObject()->GetName() == Data->ActorName)
+					if (Item.GetObject()->GetName() == Data.ActorName)
 					{
-						Item->RestoreData(Data);
+						Item->RestorePlayerData(Data);
 						continue;
 					}
 				}
@@ -48,10 +52,18 @@ void UPlatformerGameInstance::LoadGame()
 	}
 }
 
-void UPlatformerGameInstance::AddSavable(TScriptInterface<ISavable> Item)
+void UPlatformerGameInstance::AddSavablePlayer(TScriptInterface<ISavable> Item)
 {
 	if (Item)
 	{
-		Savables.Add(Item);
+		PlayerSavables.Add(Item);
+	}
+}
+
+void UPlatformerGameInstance::AddSavablePowerUp(TScriptInterface<ISavable> Item)
+{
+	if (Item)
+	{
+		PowerUpSavables.Add(Item);
 	}
 }

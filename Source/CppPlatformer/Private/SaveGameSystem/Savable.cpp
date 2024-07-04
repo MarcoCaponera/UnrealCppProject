@@ -5,11 +5,20 @@
 
 // Add default functionality here for any ISavable functions that are not pure virtual.
 
-USaveGameDataBase* ISavable::GetData()
+FPlayerSaveGameDataBase ISavable::GetPlayerData()
 {
-	return nullptr;
+	return FPlayerSaveGameDataBase();
 }
 
-void ISavable::RestoreData(USaveGameDataBase* Data)
+void ISavable::RestorePlayerData(FPlayerSaveGameDataBase Data)
+{
+}
+
+FPowerUpSaveGameDataBase ISavable::GetPowerUpData()
+{
+	return FPowerUpSaveGameDataBase();
+}
+
+void ISavable::RestorePowerUpData(FPowerUpSaveGameDataBase Data)
 {
 }

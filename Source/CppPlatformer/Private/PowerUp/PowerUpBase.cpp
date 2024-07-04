@@ -3,6 +3,7 @@
 #include "PowerUp/PowerUpBase.h"
 #include "Components/BoxComponent.h"
 #include "Components/BillboardComponent.h"
+#include "SaveGameSystem/SaveGameInterface.h"
 #include "Components/TextRenderComponent.h"
 
 // Sets default values
@@ -23,11 +24,30 @@ APowerUpBase::APowerUpBase()
 	Mesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
+FPowerUpSaveGameDataBase APowerUpBase::GetPowerUpData()
+{
+	FPowerUpSaveGameDataBase Data = FPowerUpSaveGameDataBase();
+	Data.ActorName = GetName();
+	Data.PowerUpTransform = GetActorTransform();
+	Data.bTaken = bTaken;
+	return Data;
+}
+
+void APowerUpBase::RestorePowerUpData(FPowerUpSaveGameDataBase Data)
+{
+	bTaken = Data.bTaken;
+	SetActorTransform(Data.PowerUpTransform);
+}
+
 // Called when the game starts or when spawned
 void APowerUpBase::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	ISaveGameInterface* SaveGame = Cast<ISaveGameInterface>(GetGameInstance());
+	if (SaveGame)
+	{
+		SaveGame->AddSavablePowerUp(this);
+	}
 }
 
 void APowerUpBase::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -36,6 +56,7 @@ void APowerUpBase::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* O
 	SetActorHiddenInGame(true);
 	SetActorEnableCollision(false);
 	SetActorTickEnabled(false);
+	bTaken = true;
 }
 
 void APowerUpBase::ActivateEffect(AActor* OtherActor)

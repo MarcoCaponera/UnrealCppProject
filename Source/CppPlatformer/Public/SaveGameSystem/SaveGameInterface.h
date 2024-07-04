@@ -27,5 +27,7 @@ public:
 
 	virtual void LoadGame();
 
-	virtual void AddSavable(TScriptInterface<ISavable> Savable);
+	virtual void AddSavablePlayer(TScriptInterface<ISavable> Savable);
+
+	virtual void AddSavablePowerUp(TScriptInterface<ISavable> Savable);
 };

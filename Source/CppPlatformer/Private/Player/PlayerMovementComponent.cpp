@@ -57,6 +57,7 @@ UPlayerMovementComponent::UPlayerMovementComponent()
 
 void UPlayerMovementComponent::MovementEndXY()
 {
+	UE_LOG(LogTemp, Warning, TEXT("Movement Stop"));
 	bIsMoving = false;
 	if (bIsGrounded)
 	{

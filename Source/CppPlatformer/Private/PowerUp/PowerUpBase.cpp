@@ -36,7 +36,12 @@ FPowerUpSaveGameDataBase APowerUpBase::GetPowerUpData()
 void APowerUpBase::RestorePowerUpData(FPowerUpSaveGameDataBase Data)
 {
 	bTaken = Data.bTaken;
-	SetActorTransform(Data.PowerUpTransform);
+	if (!bTaken)
+	{
+		SetActorHiddenInGame(false);
+		//SetActorEnableCollision(true);
+		SetActorTransform(Data.PowerUpTransform);
+	}
 }
 
 // Called when the game starts or when spawned
@@ -52,11 +57,13 @@ void APowerUpBase::BeginPlay()
 
 void APowerUpBase::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	ActivateEffect(OtherActor);
-	SetActorHiddenInGame(true);
-	SetActorEnableCollision(false);
-	SetActorTickEnabled(false);
-	bTaken = true;
+	if (!bTaken)
+	{
+		ActivateEffect(OtherActor);
+		SetActorHiddenInGame(true);
+		//SetActorEnableCollision(false);
+		bTaken = true;
+	}
 }
 
 void APowerUpBase::ActivateEffect(AActor* OtherActor)

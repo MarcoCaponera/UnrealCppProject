@@ -4,6 +4,7 @@
 #include "Props/Puzzle/SequencialButtonPuzzle.h"
 #include "Props/Puzzle/PuzzleButton.h"
 #include "Props/Interactable/Interactable.h"
+#include "MovingPlatform.h"
 #include "Kismet/GameplayStatics.h"
 
 // Sets default values
@@ -56,6 +57,10 @@ void ASequencialButtonPuzzle::OnButtonPressed(APuzzleButton* Caller)
 				for (TPair<APuzzleButton*, int> Elems : Buttons)
 				{
 					Elems.Key->SetMaterial(CorrectMaterial);
+				}
+				if (Platform)
+				{
+					Platform->InitMove();
 				}
 				UGameplayStatics::PlaySound2D(GetWorld(), CorrectSound);
 			}

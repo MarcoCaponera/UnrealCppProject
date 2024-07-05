@@ -44,6 +44,8 @@ public:
 
 	virtual void Tick(float DeltaTime) override;
 
+	UFUNCTION()
+	void InitMove();
 
 protected:
 	virtual void BeginPlay() override;
@@ -54,8 +56,6 @@ protected:
 	/// <returns></returns>
 	bool StartTimerIfDelay();
 
-	UFUNCTION()
-	void InitMove();
 
 	void StartMove();
 

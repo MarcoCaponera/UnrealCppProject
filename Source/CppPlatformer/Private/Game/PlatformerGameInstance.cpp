@@ -48,6 +48,18 @@ void UPlatformerGameInstance::LoadGame()
 					}
 				}
 			}
+
+			for (FPowerUpSaveGameDataBase Data : PSaveGame->PowerUpsData)
+			{
+				for (TScriptInterface<ISavable> Item : PowerUpSavables)
+				{
+					if (Item.GetObject()->GetName() == Data.ActorName)
+					{
+						Item->RestorePowerUpData(Data);
+						continue;
+					}
+				}
+			}
 		}
 	}
 }

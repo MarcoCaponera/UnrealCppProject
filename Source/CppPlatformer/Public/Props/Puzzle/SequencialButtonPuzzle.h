@@ -29,6 +29,9 @@ protected:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Meta = (MakeEditWidget = true))
 	TMap<APuzzleButton*, int> Buttons;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Meta = (MakeEditWidget = true))
+	class AMovingPlatform* Platform;
+
 	FString CorrectMaterialPath = "/Game/MyContent/Materials/M_Green.M_Green";
 
 	const FString CorrectSoundPath = "/Game/MyContent/Sound/CorrectAnswerSound.CorrectAnswerSound";

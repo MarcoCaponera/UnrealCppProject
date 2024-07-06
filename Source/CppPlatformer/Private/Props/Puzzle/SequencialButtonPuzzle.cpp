@@ -5,6 +5,7 @@
 #include "Props/Puzzle/PuzzleButton.h"
 #include "Props/Interactable/Interactable.h"
 #include "MovingPlatform.h"
+#include "SaveGameSystem/SaveGameInterface.h"
 #include "Kismet/GameplayStatics.h"
 
 // Sets default values
@@ -43,6 +44,12 @@ void ASequencialButtonPuzzle::BeginPlay()
 			Elems.Key->Subscribe(this, FName("OnButtonPressed"));
 		}
 	}
+
+	ISaveGameInterface* SaveGame = Cast<ISaveGameInterface>(GetGameInstance());
+	if (SaveGame)
+	{
+		SaveGame->AddSavablePuzzle(this);
+	}
 }
 
 void ASequencialButtonPuzzle::OnButtonPressed(APuzzleButton* Caller)
@@ -52,7 +59,7 @@ void ASequencialButtonPuzzle::OnButtonPressed(APuzzleButton* Caller)
 		if (Buttons[Caller] == CurrentButton)
 		{
 			CurrentButton = CurrentButton + 1;
-			if (CurrentButton >= Buttons.Num())
+			if (CheckSolveCondition())
 			{
 				for (TPair<APuzzleButton*, int> Elems : Buttons)
 				{
@@ -64,8 +71,8 @@ void ASequencialButtonPuzzle::OnButtonPressed(APuzzleButton* Caller)
 				}
 				UGameplayStatics::PlaySound2D(GetWorld(), CorrectSound);
 			}
-			return;
 
+			return;
 		}
 		ResetCurrentButton();
 		for (TPair<APuzzleButton*, int> Elems : Buttons)
@@ -76,9 +83,35 @@ void ASequencialButtonPuzzle::OnButtonPressed(APuzzleButton* Caller)
 	}
 }
 
+FPuzzleSaveGameDataBase ASequencialButtonPuzzle::GetPuzzleData()
+{
+	FPuzzleSaveGameDataBase Data;
+	Data.ActorName = GetName();
+	Data.bResolved = CheckSolveCondition();
+	Data.ButtonCounter = CurrentButton; 
+	return Data;
+}
+
+void ASequencialButtonPuzzle::RestorePuzzleData(FPuzzleSaveGameDataBase Data)
+{
+	if (Data.bResolved)
+	{
+		for (TPair<APuzzleButton*, int> Elems : Buttons)
+		{
+			Elems.Key->SetMaterial(CorrectMaterial);
+		}
+	}
+	CurrentButton = Data.ButtonCounter;
+}
+
 void ASequencialButtonPuzzle::ResetCurrentButton()
 {
 	CurrentButton = 0;
+}
+
+bool ASequencialButtonPuzzle::CheckSolveCondition()
+{
+	return CurrentButton >= Buttons.Num();
 }
 
 // Called every frame

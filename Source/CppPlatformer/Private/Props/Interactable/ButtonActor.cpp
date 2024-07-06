@@ -2,6 +2,7 @@
 
 
 #include "Props/Interactable/ButtonActor.h"
+#include "SaveGameSystem/SaveGameInterface.h"
 #include "Components/BoxComponent.h"
 
 // Sets default values
@@ -28,7 +29,22 @@ AButtonActor::AButtonActor()
 void AButtonActor::BeginPlay()
 {
 	Super::BeginPlay();
+
+	UMaterialInterface* MatInterface = Mesh->GetMaterial(0);
+	if (MatInterface)
+	{
+		UMaterial* StartMat = MatInterface->GetMaterial();
+		if (StartMat)
+		{
+			StartingMaterial = StartMat;
+		}
+	}
 	
+	ISaveGameInterface* SaveGame = Cast<ISaveGameInterface>(GetGameInstance());
+	if (SaveGame)
+	{
+		SaveGame->AddSavableButton(this);
+	}
 }
 
 // Called every frame
@@ -61,4 +77,44 @@ EInteractionType AButtonActor::GetInteractionType()
 void AButtonActor::Subscribe(TObjectPtr<UObject> InObject, const FName &FunctionName)
 {
 	Activate.AddUFunction(InObject, FunctionName);
+}
+
+FButtonSaveGameDataBase AButtonActor::GetButtonData()
+{
+	FButtonSaveGameDataBase Data = FButtonSaveGameDataBase();
+	Data.ActorName = GetName();
+	Data.bPressed = bTriggered;
+	return Data;
+}
+
+void AButtonActor::RestoreButtonData(FButtonSaveGameDataBase Data)
+{
+	if (Data.bPressed != bTriggered)
+	{
+		if (bTriggered)
+		{
+			Mesh->SetMaterial(0, StartingMaterial);
+		}
+		else
+		{
+			Mesh->SetMaterial(0, TriggeredMaterial);
+		}
+	}
+	else
+	{
+		if (bTriggered)
+		{
+			Mesh->SetMaterial(0, TriggeredMaterial);
+		}
+		else
+		{
+			Mesh->SetMaterial(0, StartingMaterial);
+		}
+	}
+	bTriggered = Data.bPressed;
+}
+
+bool AButtonActor::GetTriggered()
+{
+	return bTriggered;
 }

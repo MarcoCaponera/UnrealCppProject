@@ -24,6 +24,16 @@ void UPlatformerGameInstance::SaveGame()
 				PSaveGame->PowerUpsData.Add(Item->GetPowerUpData());
 			}
 
+			for (TScriptInterface<ISavable> Item : ButtonSavables) 
+			{
+				PSaveGame->ButtonsData.Add(Item->GetButtonData());
+			}
+
+			for (TScriptInterface<ISavable> Item : PuzzleSavables)
+			{
+				PSaveGame->PuzzlesData.Add(Item->GetPuzzleData());
+			}
+
 			UGameplayStatics::SaveGameToSlot(PSaveGame, FString("Slot1"), 0);
 		}
 	}
@@ -60,6 +70,30 @@ void UPlatformerGameInstance::LoadGame()
 					}
 				}
 			}
+
+			for (FButtonSaveGameDataBase Data : PSaveGame->ButtonsData)
+			{
+				for (TScriptInterface<ISavable> Item : ButtonSavables)
+				{
+					if (Item.GetObject()->GetName() == Data.ActorName)
+					{
+						Item->RestoreButtonData(Data);
+						continue;
+					}
+				}
+			}
+
+			for (FPuzzleSaveGameDataBase Data : PSaveGame->PuzzlesData)
+			{
+				for (TScriptInterface<ISavable> Item : PuzzleSavables)
+				{
+					if (Item.GetObject()->GetName() == Data.ActorName)
+					{
+						Item->RestorePuzzleData(Data);
+						continue;
+					}
+				}
+			}
 		}
 	}
 }
@@ -68,7 +102,10 @@ void UPlatformerGameInstance::AddSavablePlayer(TScriptInterface<ISavable> Item)
 {
 	if (Item)
 	{
-		PlayerSavables.Add(Item);
+		if (!PlayerSavables.Contains(Item))
+		{
+			PlayerSavables.Add(Item);
+		}
 	}
 }
 
@@ -76,6 +113,31 @@ void UPlatformerGameInstance::AddSavablePowerUp(TScriptInterface<ISavable> Item)
 {
 	if (Item)
 	{
-		PowerUpSavables.Add(Item);
+		if (!PowerUpSavables.Contains(Item))
+		{
+			PowerUpSavables.Add(Item);
+		}
+	}
+}
+
+void UPlatformerGameInstance::AddSavableButton(TScriptInterface<ISavable> Item)
+{
+	if (Item)
+	{
+		if (!ButtonSavables.Contains(Item))
+		{
+			ButtonSavables.Add(Item);
+		}
+	}
+}
+
+void UPlatformerGameInstance::AddSavablePuzzle(TScriptInterface<ISavable> Item)
+{
+	if (Item)
+	{
+		if (!PuzzleSavables.Contains(Item))
+		{
+			PuzzleSavables.Add(Item);
+		}
 	}
 }

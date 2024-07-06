@@ -22,3 +22,21 @@ FPowerUpSaveGameDataBase ISavable::GetPowerUpData()
 void ISavable::RestorePowerUpData(FPowerUpSaveGameDataBase Data)
 {
 }
+
+FButtonSaveGameDataBase ISavable::GetButtonData()
+{
+	return FButtonSaveGameDataBase();
+}
+
+void ISavable::RestoreButtonData(FButtonSaveGameDataBase Data)
+{
+}
+
+FPuzzleSaveGameDataBase ISavable::GetPuzzleData()
+{
+	return FPuzzleSaveGameDataBase();
+}
+
+void ISavable::RestorePuzzleData(FPuzzleSaveGameDataBase Data)
+{
+}

@@ -20,3 +20,11 @@ void ISaveGameInterface::AddSavablePlayer(TScriptInterface<ISavable> Savable)
 void ISaveGameInterface::AddSavablePowerUp(TScriptInterface<ISavable> Savable)
 {
 }
+
+void ISaveGameInterface::AddSavableButton(TScriptInterface<ISavable> Savable)
+{
+}
+
+void ISaveGameInterface::AddSavablePuzzle(TScriptInterface<ISavable> Savable)
+{
+}

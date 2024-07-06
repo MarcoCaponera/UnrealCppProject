@@ -5,9 +5,9 @@
 
 void APuzzleButton::BeginPlay()
 {
-	bConsumeTrigger = true;
+	Super::BeginPlay();
 
-	StartingMaterial = Mesh->GetMaterial(0)->GetMaterial();
+	bConsumeTrigger = true;
 }
 
 void APuzzleButton::ResetMe()

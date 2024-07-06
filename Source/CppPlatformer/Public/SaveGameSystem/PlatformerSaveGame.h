@@ -23,4 +23,10 @@ public:
 
 	UPROPERTY()
 	TArray<FPowerUpSaveGameDataBase> PowerUpsData;
+
+	UPROPERTY()
+	TArray<FButtonSaveGameDataBase> ButtonsData;
+
+	UPROPERTY()
+	TArray<FPuzzleSaveGameDataBase> PuzzlesData;
 };

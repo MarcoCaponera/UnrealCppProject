@@ -29,10 +29,22 @@ public:
 	UFUNCTION(BlueprintCallable)
 	virtual void AddSavablePowerUp(TScriptInterface<ISavable> Item) override;
 
+	UFUNCTION(BlueprintCallable)
+	virtual void AddSavableButton(TScriptInterface<ISavable> Item) override;
+
+	UFUNCTION(BlueprintCallable)
+	virtual void AddSavablePuzzle(TScriptInterface<ISavable> Item) override;
+
 private:
 	UPROPERTY()
 	TArray<TScriptInterface<ISavable>> PlayerSavables;
 
 	UPROPERTY()
 	TArray<TScriptInterface<ISavable>> PowerUpSavables;
+
+	UPROPERTY()
+	TArray<TScriptInterface<ISavable>> ButtonSavables;
+
+	UPROPERTY()
+	TArray<TScriptInterface<ISavable>> PuzzleSavables;
 };

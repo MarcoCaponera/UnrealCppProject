@@ -6,4 +6,7 @@
 UPlatformerSaveGame::UPlatformerSaveGame()
 {
 	PlayersData.Empty();
+	ButtonsData.Empty();
+	PowerUpsData.Empty();
+	PuzzlesData.Empty();
 }

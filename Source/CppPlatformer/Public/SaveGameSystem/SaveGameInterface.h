@@ -30,4 +30,8 @@ public:
 	virtual void AddSavablePlayer(TScriptInterface<ISavable> Savable);
 
 	virtual void AddSavablePowerUp(TScriptInterface<ISavable> Savable);
+
+	virtual void AddSavableButton(TScriptInterface<ISavable> Savable);
+
+	virtual void AddSavablePuzzle(TScriptInterface<ISavable> Savable);
 };

@@ -5,10 +5,11 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Props/Puzzle/PuzzleButton.h"
+#include "SaveGameSystem/Savable.h"
 #include "SequencialButtonPuzzle.generated.h"
 
 UCLASS()
-class CPPPLATFORMER_API ASequencialButtonPuzzle : public AActor
+class CPPPLATFORMER_API ASequencialButtonPuzzle : public AActor, public ISavable
 {
 	GENERATED_BODY()
 	
@@ -23,7 +24,15 @@ protected:
 	UFUNCTION()
 	virtual void OnButtonPressed(APuzzleButton* Caller);
 
+	UFUNCTION()
+	virtual FPuzzleSaveGameDataBase GetPuzzleData() override;
+
+	UFUNCTION()
+	virtual void RestorePuzzleData(FPuzzleSaveGameDataBase Data) override;
+
 	virtual void ResetCurrentButton();
+
+	virtual bool CheckSolveCondition();
 
 protected:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Meta = (MakeEditWidget = true))

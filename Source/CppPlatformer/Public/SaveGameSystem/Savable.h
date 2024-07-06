@@ -39,6 +39,27 @@ struct FPowerUpSaveGameDataBase : public FSaveGameDataBase
 	bool bTaken;
 };
 
+USTRUCT(BlueprintType)
+struct FButtonSaveGameDataBase : public FSaveGameDataBase
+{
+	GENERATED_BODY()
+
+	UPROPERTY()
+	bool bPressed;
+};
+
+USTRUCT(BlueprintType)
+struct FPuzzleSaveGameDataBase : public FSaveGameDataBase
+{
+	GENERATED_BODY()
+
+	UPROPERTY()
+	bool bResolved;
+
+	UPROPERTY()
+	int ButtonCounter;
+};
+
 // This class does not need to be modified.
 UINTERFACE(MinimalAPI)
 class USavable : public UInterface
@@ -67,4 +88,16 @@ public:
 
 	UFUNCTION()
 	virtual void RestorePowerUpData(FPowerUpSaveGameDataBase Data);
+
+	UFUNCTION()
+	virtual FButtonSaveGameDataBase GetButtonData();
+
+	UFUNCTION()
+	virtual void RestoreButtonData(FButtonSaveGameDataBase Data);
+
+	UFUNCTION()
+	virtual FPuzzleSaveGameDataBase GetPuzzleData();
+
+	UFUNCTION()
+	virtual void RestorePuzzleData(FPuzzleSaveGameDataBase Data);
 };

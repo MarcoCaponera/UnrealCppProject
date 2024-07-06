@@ -85,19 +85,19 @@ FMovingPlatformSaveGameData AMovingPlatform::GetPlatformData()
 
 void AMovingPlatform::RestorePlatformData(FMovingPlatformSaveGameData Data)
 {
-	if (Data.bActive && bAutoActivate)
+	ClearAllTimeRelated();
+	if (Data.bActive && (bAutoActivate || !bIsOneShot))
 	{
 		InitMove();
 	}
 	else if(Data.bActive)
 	{
-		ClearAllTimeRelated();
 		SetActorLocation(EndPoint);
+		bMove = true;
 		return;
 	}
 	else
 	{
-		ClearAllTimeRelated();
 		bMove = false;
 	}
 	SetActorLocation(StartPoint);

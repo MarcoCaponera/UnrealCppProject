@@ -56,6 +56,6 @@ private:
 	float HalfHeightExtent;
 	class USoundWave* SoundWave;
 	class UCameraComponent* CurrentCamera;
-	const FString Lol = "/Game/MyContent/Sound/HarmlessSound.HarmlessSound";
+	const FString Lol = "/Game/MyContent/Sound/InspectSound.InspectSound";
 	AActor* Inspector;
 };

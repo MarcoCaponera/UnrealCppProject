@@ -34,6 +34,11 @@ void UPlatformerGameInstance::SaveGame()
 				PSaveGame->PuzzlesData.Add(Item->GetPuzzleData());
 			}
 
+			for (TScriptInterface<ISavable> Item : PlatformSavables)
+			{
+				PSaveGame->PlatformsData.Add(Item->GetPlatformData());
+			}
+
 			UGameplayStatics::SaveGameToSlot(PSaveGame, FString("Slot1"), 0);
 		}
 	}
@@ -94,6 +99,18 @@ void UPlatformerGameInstance::LoadGame()
 					}
 				}
 			}
+
+			for (FMovingPlatformSaveGameData Data : PSaveGame->PlatformsData)
+			{
+				for (TScriptInterface<ISavable> Item : PlatformSavables)
+				{
+					if (Item.GetObject()->GetName() == Data.ActorName)
+					{
+						Item->RestorePlatformData(Data);
+						continue;
+					}
+				}
+			}
 		}
 	}
 }
@@ -138,6 +155,17 @@ void UPlatformerGameInstance::AddSavablePuzzle(TScriptInterface<ISavable> Item)
 		if (!PuzzleSavables.Contains(Item))
 		{
 			PuzzleSavables.Add(Item);
+		}
+	}
+}
+
+void UPlatformerGameInstance::AddSavablePlatform(TScriptInterface<ISavable> Item)
+{
+	if (Item)
+	{
+		if (!PlatformSavables.Contains(Item))
+		{
+			PlatformSavables.Add(Item);
 		}
 	}
 }

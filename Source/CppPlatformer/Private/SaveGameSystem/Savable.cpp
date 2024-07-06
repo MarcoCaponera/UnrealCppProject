@@ -40,3 +40,12 @@ FPuzzleSaveGameDataBase ISavable::GetPuzzleData()
 void ISavable::RestorePuzzleData(FPuzzleSaveGameDataBase Data)
 {
 }
+
+FMovingPlatformSaveGameData ISavable::GetPlatformData()
+{
+	return FMovingPlatformSaveGameData();
+}
+
+void ISavable::RestorePlatformData(FMovingPlatformSaveGameData Data)
+{
+}

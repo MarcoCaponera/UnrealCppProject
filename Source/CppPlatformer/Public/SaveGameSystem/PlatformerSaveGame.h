@@ -29,4 +29,7 @@ public:
 
 	UPROPERTY()
 	TArray<FPuzzleSaveGameDataBase> PuzzlesData;
+
+	UPROPERTY()
+	TArray<FMovingPlatformSaveGameData> PlatformsData;
 };

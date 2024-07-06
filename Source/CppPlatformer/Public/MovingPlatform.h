@@ -5,13 +5,14 @@
 #include "CoreMinimal.h"
 #include "Props/Platforms/PlatformBase.h"
 #include "Components/TimelineComponent.h"
+#include "SaveGameSystem/Savable.h"
 #include "MovingPlatform.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class CPPPLATFORMER_API AMovingPlatform : public APlatformBase
+class CPPPLATFORMER_API AMovingPlatform : public APlatformBase, public ISavable
 {
 	GENERATED_BODY()
 public:
@@ -47,6 +48,12 @@ public:
 	UFUNCTION()
 	void InitMove();
 
+	UFUNCTION()
+	virtual FMovingPlatformSaveGameData GetPlatformData();
+
+	UFUNCTION()
+	virtual void RestorePlatformData(FMovingPlatformSaveGameData Data);
+
 protected:
 	virtual void BeginPlay() override;
 
@@ -60,6 +67,8 @@ protected:
 	void StartMove();
 
 	void RevertMove();
+
+	void ClearAllTimeRelated();
 
 protected:
 	bool bMove;

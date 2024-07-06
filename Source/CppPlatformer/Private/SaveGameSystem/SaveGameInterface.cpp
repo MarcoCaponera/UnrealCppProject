@@ -28,3 +28,7 @@ void ISaveGameInterface::AddSavableButton(TScriptInterface<ISavable> Savable)
 void ISaveGameInterface::AddSavablePuzzle(TScriptInterface<ISavable> Savable)
 {
 }
+
+void ISaveGameInterface::AddSavablePlatform(TScriptInterface<ISavable> Savable)
+{
+}

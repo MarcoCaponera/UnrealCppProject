@@ -34,4 +34,6 @@ public:
 	virtual void AddSavableButton(TScriptInterface<ISavable> Savable);
 
 	virtual void AddSavablePuzzle(TScriptInterface<ISavable> Savable);
+
+	virtual void AddSavablePlatform(TScriptInterface<ISavable> Savable);
 };

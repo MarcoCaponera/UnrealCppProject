@@ -9,4 +9,5 @@ UPlatformerSaveGame::UPlatformerSaveGame()
 	ButtonsData.Empty();
 	PowerUpsData.Empty();
 	PuzzlesData.Empty();
+	PlatformsData.Empty();
 }

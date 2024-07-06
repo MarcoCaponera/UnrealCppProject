@@ -34,6 +34,7 @@ void AResetVolume::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* O
 		if (SaveGame)
 		{
 			SaveGame->LoadGame();
+			UE_LOG(LogTemp, Warning, TEXT("LoadCalled"));
 		}
 	}
 }

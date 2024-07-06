@@ -42,6 +42,10 @@ void APowerUpBase::RestorePowerUpData(FPowerUpSaveGameDataBase Data)
 		//SetActorEnableCollision(true);
 		SetActorTransform(Data.PowerUpTransform);
 	}
+	else
+	{ 
+		SetActorHiddenInGame(true);
+	}
 }
 
 // Called when the game starts or when spawned

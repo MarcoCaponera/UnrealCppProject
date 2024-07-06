@@ -35,6 +35,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	virtual void AddSavablePuzzle(TScriptInterface<ISavable> Item) override;
 
+	UFUNCTION(BlueprintCallable)
+	virtual void AddSavablePlatform(TScriptInterface<ISavable> Item) override;
+
 private:
 	UPROPERTY()
 	TArray<TScriptInterface<ISavable>> PlayerSavables;
@@ -47,4 +50,7 @@ private:
 
 	UPROPERTY()
 	TArray<TScriptInterface<ISavable>> PuzzleSavables;
+
+	UPROPERTY()
+	TArray<TScriptInterface<ISavable>> PlatformSavables;
 };

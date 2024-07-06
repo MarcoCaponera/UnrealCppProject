@@ -22,20 +22,26 @@ void ACheckpoint::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	bTriggered = false;
 }
 
-void ACheckpoint::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+void ACheckpoint::Save()
 {
 	UGameInstance* GameInstance = GetGameInstance();
-	if (GameInstance) 
+	if (GameInstance)
 	{
 		ISaveGameInterface* SaveGame = Cast<ISaveGameInterface>(GameInstance);
 		if (SaveGame)
 		{
 			SaveGame->SaveGame();
-			UE_LOG(LogTemp, Warning, TEXT("GameSaveCalled"));
+			UE_LOG(LogTemp, Warning, TEXT("SaveCalled"));
 		}
 	}
+}
+
+void ACheckpoint::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	GetWorldTimerManager().SetTimer(TimerHandle, this, &ACheckpoint::Save, 0.5f, false, 0.f);
 }
 
 // Called every frame

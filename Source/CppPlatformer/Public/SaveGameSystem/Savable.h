@@ -60,6 +60,15 @@ struct FPuzzleSaveGameDataBase : public FSaveGameDataBase
 	int ButtonCounter;
 };
 
+USTRUCT(BlueprintType)
+struct FMovingPlatformSaveGameData : public FSaveGameDataBase
+{
+	GENERATED_BODY()
+
+	UPROPERTY()
+	bool bActive;
+};
+
 // This class does not need to be modified.
 UINTERFACE(MinimalAPI)
 class USavable : public UInterface
@@ -100,4 +109,10 @@ public:
 
 	UFUNCTION()
 	virtual void RestorePuzzleData(FPuzzleSaveGameDataBase Data);
+
+	UFUNCTION()
+	virtual FMovingPlatformSaveGameData GetPlatformData();
+
+	UFUNCTION()
+	virtual void RestorePlatformData(FMovingPlatformSaveGameData Data);
 };

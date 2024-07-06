@@ -4,8 +4,11 @@
 #include "MovingPlatform.h"
 #include "Components/TimelineComponent.h"
 #include "Curves/RichCurve.h"
+#include "SaveGameSystem/SaveGameInterface.h"
 #include "Props/Interactable/ButtonActor.h"
 #include "Curves/CurveFloat.h"
+#include "TimerManager.h"
+#include "Engine/World.h"
 
 AMovingPlatform::AMovingPlatform()
 {
@@ -45,6 +48,12 @@ void AMovingPlatform::BeginPlay()
 	{
 		InitMove();
 	}
+
+	ISaveGameInterface* SaveGame = Cast<ISaveGameInterface>(GetGameInstance());
+	if (SaveGame)
+	{
+		SaveGame->AddSavablePlatform(this);
+	}
 }
 
 bool AMovingPlatform::StartTimerIfDelay()
@@ -59,10 +68,39 @@ bool AMovingPlatform::StartTimerIfDelay()
 
 void AMovingPlatform::InitMove()
 {
+	bMove = true;
 	if (!StartTimerIfDelay())
 	{
 		StartMove();
 	}
+}
+
+FMovingPlatformSaveGameData AMovingPlatform::GetPlatformData()
+{
+	FMovingPlatformSaveGameData Data;
+	Data.ActorName = GetName();
+	Data.bActive = bMove;
+	return Data;
+}
+
+void AMovingPlatform::RestorePlatformData(FMovingPlatformSaveGameData Data)
+{
+	if (Data.bActive && bAutoActivate)
+	{
+		InitMove();
+	}
+	else if(Data.bActive)
+	{
+		ClearAllTimeRelated();
+		SetActorLocation(EndPoint);
+		return;
+	}
+	else
+	{
+		ClearAllTimeRelated();
+		bMove = false;
+	}
+	SetActorLocation(StartPoint);
 }
 
 void AMovingPlatform::Tick(float DeltaTime)
@@ -96,10 +134,18 @@ void AMovingPlatform::FinishedMove()
 
 void AMovingPlatform::StartMove()
 {
-	MoveTimeline.PlayFromStart();
+	MoveTimeline.SetNewTime(0);
+	MoveTimeline.Play();
 }
 
 void AMovingPlatform::RevertMove()
 {
 	MoveTimeline.ReverseFromEnd();
+}
+
+void AMovingPlatform::ClearAllTimeRelated()
+{
+	MoveTimeline.Stop();
+	GetWorldTimerManager().ClearTimer(TimerHandle);
+	TimerHandle.Invalidate();
 }

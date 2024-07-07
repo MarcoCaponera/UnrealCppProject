@@ -134,7 +134,6 @@ void AMovingPlatform::FinishedMove()
 
 void AMovingPlatform::StartMove()
 {
-	MoveTimeline.SetNewTime(0);
 	MoveTimeline.Play();
 }
 
@@ -146,6 +145,7 @@ void AMovingPlatform::RevertMove()
 void AMovingPlatform::ClearAllTimeRelated()
 {
 	MoveTimeline.Stop();
+	MoveTimeline.SetNewTime(0);
 	GetWorldTimerManager().ClearTimer(TimerHandle);
 	TimerHandle.Invalidate();
 }
